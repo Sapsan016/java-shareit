@@ -18,27 +18,27 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item addItem(ItemDto itemDto, long userId) {
-        return itemRepository.addItem(itemDto, userId);
+    public ItemDto addItem(Item item, long userId) {
+        return itemRepository.addItem(item, userId);
     }
 
     @Override
-    public Item updateItem(long itemId, long userId) {
-        return null;
+    public ItemDto updateItem(long itemId, long userId, Item item) {
+        return itemRepository.updateItem(itemId,userId, item);
     }
 
     @Override
-    public Item getItemById(long itemId, long userId) {
-        return null;
+    public ItemDto getItemById(long itemId, long userId) {
+        return itemRepository.getItemById(itemId,userId);
     }
 
     @Override
-    public List<Item> getItems(long userId) {
-        return null;
+    public List<ItemDto> getItems(long userId) {
+        return itemRepository.getItems(userId);
     }
 
     @Override
-    public List<Item> searchItems(long userId) {
-        return null;
+    public List<ItemDto> searchItems(long userId, String text) {
+        return itemRepository.searchItems(userId, text);
     }
 }

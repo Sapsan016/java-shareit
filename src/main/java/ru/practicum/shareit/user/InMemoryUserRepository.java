@@ -26,12 +26,15 @@ public class InMemoryUserRepository implements UserRepository {
         return ++generatedId;
     }
 
-    Map<Long, User> users = new HashMap<>();
+    static Map<Long, User> users = new HashMap<>();
 
+    public static Map<Long, User> getUsers() {
+        return users;
+    }
 
     @Override
     public UserDto getUserById(long id) {
-        if (isPresent(id)) {
+        if (isPresentUser(id)) {
             return UserMapper.toUserDto(users.get(id));
         }
         throw new UserNotFoundException("Пользователь не найден");
@@ -59,7 +62,7 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public UserDto updateUser(long userId, User userToUpdate) {
-        if (isPresent(userId)) {
+        if (isPresentUser(userId)) {
             User user = users.get(userId);
 
             if(checkEmail(userToUpdate)) {
@@ -74,6 +77,7 @@ public class InMemoryUserRepository implements UserRepository {
             log.info("Пользователь с Id = {} обновлен", userId);
             return UserMapper.toUserDto(user);
         }
+        log.error("Пользователь с Id = {} не найден", userId);
         throw new UserNotFoundException("Пользователь не найден");
     }
 
@@ -83,12 +87,11 @@ public class InMemoryUserRepository implements UserRepository {
         log.info("Пользователь с Id = {} удален", id);
     }
 
-    private boolean isPresent(long id) {
+    public static boolean isPresentUser(long id) {
         if (users.containsKey(id)) {
             return true;
         } else {
-            log.info("Пользователь с Id = {} не найден", id);
-            throw new UserNotFoundException("Пользователь не найден");
+            return false;
         }
     }
 

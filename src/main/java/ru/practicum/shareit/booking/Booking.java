@@ -7,6 +7,8 @@ import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -17,7 +19,11 @@ import java.time.LocalDateTime;
 @FieldDefaults(level= AccessLevel.PRIVATE)
 public class Booking {
     long id;
+    @NotBlank
+    @NotNull
     LocalDateTime start;
+    @NotBlank
+    @NotNull
     LocalDateTime end;
     Item item;
     User booker;

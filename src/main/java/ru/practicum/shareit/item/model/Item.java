@@ -4,12 +4,9 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
-/**
- * TODO Sprint add-controllers.
- */
+import javax.validation.constraints.NotBlank;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,10 +15,8 @@ public class Item {
 
     long id;
     @NotBlank
-    @NotNull
     String name;
     @NotBlank
-    @NotNull
     String description;
     Boolean available;
     User owner;

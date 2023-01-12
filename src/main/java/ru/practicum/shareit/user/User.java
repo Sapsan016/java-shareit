@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-@FieldDefaults(level= AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     long id;
     @NotNull

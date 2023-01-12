@@ -51,7 +51,7 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public UserDto createUser(User user) {
-        if(checkEmail(user)) {
+        if (checkEmail(user)) {
             throw new ValidationException("Пользователь с таким email уже существует!");
         }
         user.setId(getGeneratedId());
@@ -64,12 +64,11 @@ public class InMemoryUserRepository implements UserRepository {
     public UserDto updateUser(long userId, User userToUpdate) {
         if (isPresentUser(userId)) {
             User user = users.get(userId);
-
-            if(checkEmail(userToUpdate)) {
+            if (checkEmail(userToUpdate)) {
                 log.error("Такие данные уже существуют");
                 throw new ValidationException("Такие данные уже существуют");
             }
-            if (userToUpdate.getName() != null )
+            if (userToUpdate.getName() != null)
                 user.setName(userToUpdate.getName());
             if (userToUpdate.getEmail() != null)
                 user.setEmail(userToUpdate.getEmail());

@@ -11,7 +11,7 @@ import ru.practicum.shareit.user.User;
  */
 @Data
 @AllArgsConstructor
-@FieldDefaults(level= AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemDto {
     @NonFinal
     long id;

@@ -24,3 +24,6 @@ public class Booking {
     User booker;
     BookingStatus status;
 }
+
+
+

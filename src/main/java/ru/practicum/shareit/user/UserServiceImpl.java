@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -41,8 +42,6 @@ public class UserServiceImpl {
                 userToUpdate.setName(user.getName());
             if (user.getEmail() != null)
                 userToUpdate.setEmail(user.getEmail());
-           // System.out.println(userToUpdate);
-
             log.info("Пользователь с Id = {} обновлен", userId);
             return userRepository.save(userToUpdate);
         }

@@ -15,39 +15,38 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemController {
 
-    final ItemService itemService;
+    final ItemServiceImpl itemServiceImpl;
 
     static final String HEADER = "X-Sharer-User-Id";
 
     @Autowired
-    public ItemController(ItemService itemService) {
-        this.itemService = itemService;
+    public ItemController(ItemServiceImpl itemServiceImpl) {
+        this.itemServiceImpl = itemServiceImpl;
     }
 
     @PostMapping
-    public ItemDto addItem(@Valid @RequestBody Item item, @RequestHeader(HEADER) long userId) {
-        return itemService.addItem(item, userId);
+    public Item addItem(@Valid @RequestBody Item item, @RequestHeader(HEADER) long userId) {
+        return itemServiceImpl.addItem(item, userId);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@Valid @PathVariable long itemId, @RequestHeader(HEADER) long userId,
+    public Item updateItem(@Valid @PathVariable long itemId, @RequestHeader(HEADER) long userId,
                               @RequestBody Item item) {
-        return itemService.updateItem(itemId, userId, item);
+        return itemServiceImpl.updateItem(itemId, userId, item);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable long itemId, @RequestHeader(HEADER) long userId) {
-        return itemService.getItemById(itemId, userId);
+    public Item getItemById(@PathVariable long itemId) {
+        return itemServiceImpl.getItemById(itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getItems(@RequestHeader(HEADER) long userId) {
-        return itemService.getItems(userId);
+    public List<Item> getItems(@RequestHeader(HEADER) long userId) {
+        return itemServiceImpl.getItems(userId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItems(@RequestHeader(HEADER) long userId,
-                                     @RequestParam("text") String text) {
-        return itemService.searchItems(userId, text);
+    public List<Item> searchItems(@RequestParam("text") String text) {
+        return itemServiceImpl.searchItems(text);
     }
 }

@@ -21,6 +21,9 @@ public class UserController {
         this.userServiceImpl = userServiceImpl;
     }
 
+    /**
+     * TODO  add DTO .
+     */
     @GetMapping()
     public List<User> getAllUsers() {
         return userServiceImpl.getAllUsers();

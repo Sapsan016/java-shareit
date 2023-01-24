@@ -23,6 +23,7 @@ public class Item {
     String name;
     @NotBlank
     String description;
+
     Boolean available;
     @Column(name = "owner_id")
     Long ownerId;

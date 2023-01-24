@@ -18,8 +18,8 @@ public class ItemDto {
     String name;
     String description;
     boolean available;
-    User owner;
-    ItemRequest request;
+    Long owner;
+    Long request;
 
 
 }

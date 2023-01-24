@@ -18,7 +18,7 @@ import java.util.Map;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Repository
 @Slf4j
-public class InMemoryUserRepository implements UserRepository {
+public class InMemoryUserRepository {
     @NonFinal
     long generatedId = 0L;
 
@@ -32,15 +32,15 @@ public class InMemoryUserRepository implements UserRepository {
         return users;
     }
 
-    @Override
-    public UserDto getUserById(long id) {
-        if (isPresentUser(id)) {
-            return UserMapper.toUserDto(users.get(id));
-        }
-        throw new UserNotFoundException("Пользователь не найден");
-    }
+//    @Override
+//    public UserDto getUserById(long id) {
+//        if (isPresentUser(id)) {
+//            return UserMapper.toUserDto(users.get(id));
+//        }
+//        throw new UserNotFoundException("Пользователь не найден");
+//    }
 
-    @Override
+
     public List<UserDto> getAllUsers() {
         List<UserDto> usersDtos = new ArrayList<>();
         for (User u : users.values()) {
@@ -49,7 +49,7 @@ public class InMemoryUserRepository implements UserRepository {
         return usersDtos;
     }
 
-    @Override
+
     public UserDto createUser(User user) {
         if (checkEmail(user)) {
             throw new ValidationException("Пользователь с таким email уже существует!");
@@ -60,27 +60,27 @@ public class InMemoryUserRepository implements UserRepository {
         return UserMapper.toUserDto(user);
     }
 
-    @Override
-    public UserDto updateUser(long userId, User userToUpdate) {
-        if (isPresentUser(userId)) {
-            User user = users.get(userId);
-            if (checkEmail(userToUpdate)) {
-                log.error("Такие данные уже существуют");
-                throw new ValidationException("Такие данные уже существуют");
-            }
-            if (userToUpdate.getName() != null)
-                user.setName(userToUpdate.getName());
-            if (userToUpdate.getEmail() != null)
-                user.setEmail(userToUpdate.getEmail());
-            users.put(userId, user);
-            log.info("Пользователь с Id = {} обновлен", userId);
-            return UserMapper.toUserDto(user);
-        }
-        log.error("Пользователь с Id = {} не найден", userId);
-        throw new UserNotFoundException("Пользователь не найден");
-    }
 
-    @Override
+//    public UserDto updateUser(long userId, User userToUpdate) {
+////        if (isPresentUser(userId)) {
+////            User user = users.get(userId);
+////            if (checkEmail(userToUpdate)) {
+////                log.error("Такие данные уже существуют");
+////                throw new ValidationException("Такие данные уже существуют");
+////            }
+//            if (userToUpdate.getName() != null)
+//                user.setName(userToUpdate.getName());
+//            if (userToUpdate.getEmail() != null)
+//                user.setEmail(userToUpdate.getEmail());
+//            users.put(userId, user);
+//            log.info("Пользователь с Id = {} обновлен", userId);
+//            return UserMapper.toUserDto(user);
+//        }
+//        log.error("Пользователь с Id = {} не найден", userId);
+//        throw new UserNotFoundException("Пользователь не найден");
+//    }
+
+
     public void deleteUserById(long id) {
         users.remove(id);
         log.info("Пользователь с Id = {} удален", id);

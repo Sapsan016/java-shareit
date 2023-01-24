@@ -42,7 +42,7 @@ public class InMemoryItemRepository implements ItemRepository {
             throw new UnavailiableException("Вещь не может быть создана");
         }
         item.setId(getGeneratedId());
-        item.setOwner(InMemoryUserRepository.getUsers().get(userId));
+        item.setOwnerId(InMemoryUserRepository.getUsers().get(userId).getId());
         items.put(item.getId(), item);
         log.info("Вещь с Id = {} создана", item.getId());
         return ItemMapper.toItemDto(item);
@@ -82,7 +82,7 @@ public class InMemoryItemRepository implements ItemRepository {
     public List<ItemDto> getItems(long userId) {
         List<ItemDto> itemsDtos = new ArrayList<>();
         for (Item i : items.values()) {
-            if (i.getOwner().getId() == userId) {
+            if (i.getOwnerId() == userId) {
                 itemsDtos.add(ItemMapper.toItemDto(i));
             }
         }
@@ -105,7 +105,7 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     private boolean isOwner(Item item, long userId) {
-        if (item.getOwner().getId() != userId) {
+        if (item.getOwnerId() != userId) {
             return false;
         }
         return true;

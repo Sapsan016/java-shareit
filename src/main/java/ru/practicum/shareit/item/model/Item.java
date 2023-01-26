@@ -6,6 +6,7 @@ import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -31,6 +32,10 @@ public class Item {
     Long ownerId;
     @Column(name = "request_id")
     Long requestId;
+    @Transient
+    LocalDateTime lastBooking;
+    @Transient
+    LocalDateTime nextBooking;
 
     @Override
     public boolean equals(Object o) {

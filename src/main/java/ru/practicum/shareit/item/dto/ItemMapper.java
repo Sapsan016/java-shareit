@@ -10,7 +10,9 @@ public class ItemMapper {
                 item.getDescription(),
                 item.getAvailable(),
                 item.getOwnerId(),
-                item.getRequestId() != null ? item.getRequestId() : null
+                item.getRequestId() != null ? item.getRequestId() : null,
+                item.getLastBooking() != null ? item.getLastBooking() : null,
+                item.getNextBooking() != null ? item.getNextBooking() : null
         );
     }
 }

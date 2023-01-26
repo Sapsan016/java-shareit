@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDTO;
+import ru.practicum.shareit.item.dto.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
@@ -58,7 +59,7 @@ public class ItemController {
     }
     @PostMapping("/{itemId}/comment")
     public CommentDTO addComment(@Valid @RequestBody Comment comment, @RequestHeader(HEADER) long userId,
-                                 @PathVariable String itemId) {
-        return ItemMapper.toItemDto(itemService.addItem(comment, userId, itemId));
+                                 @PathVariable long itemId) {
+        return CommentMapper.toCommentDto(itemService.addComment(comment, userId, itemId));
     }
 }

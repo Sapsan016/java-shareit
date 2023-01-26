@@ -4,12 +4,16 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UnavailiableException;
 import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +25,30 @@ public class ItemServiceImpl implements ItemService {
 
     UserRepository userRepository;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository) {
+    CommentRepository commentRepository;
+
+    BookingRepository bookingRepository;
+
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, CommentRepository commentRepository, BookingRepository bookingRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
+        this.bookingRepository = bookingRepository;
     }
 
     @Override
     public List<Item> getItems(long userId) {
-        return itemRepository.findByOwnerId(userId);
+        List<Item> itemList = itemRepository.findByOwnerId(userId);
+
+        for (Item item : itemList) {
+            List<Booking> bookingsList = bookingRepository.findByItemIdOrderByStartDesc(item.getId());
+            for (Booking b : bookingsList) {
+                item.setLastBooking(b.getEnd());
+                item.setNextBooking(b.getStart());
+            }
+        }
+
+        return itemList;
     }
 
     @Override
@@ -42,6 +62,7 @@ public class ItemServiceImpl implements ItemService {
             throw new UserNotFoundException("Пользователь не найден");
         }
         item.setOwnerId(userId);
+        log.info("Новая вещь добавлена");
         return itemRepository.save(item);
     }
 
@@ -68,6 +89,7 @@ public class ItemServiceImpl implements ItemService {
         if (itemRepository.findById(itemId).isPresent()) {
             return itemRepository.findById(itemId).get();
         }
+        log.error("Вещь с Id = {} не найдена", itemId);
         throw new ItemNotFoundException("Вещь не найдена");
     }
 
@@ -78,5 +100,16 @@ public class ItemServiceImpl implements ItemService {
         }
         String query = text.toLowerCase();
         return itemRepository.search(query);
+    }
+
+    @Override
+    public Comment addComment(Comment comment, long userId, long itemId) {
+        if (userId == bookingRepository.findById(itemId).get().getBookerId() &&
+                bookingRepository.findById(itemId).get().getEnd().isBefore(LocalDateTime.now())) {
+            log.info("Добавлен новый отзыв к вещи с Id = {}", itemId);
+            return commentRepository.save(comment);
+        }
+        log.error("Невеный Id пользователя или срок аенды не завершен");
+        throw new UserNotFoundException("Невеный Id пользователя");
     }
 }

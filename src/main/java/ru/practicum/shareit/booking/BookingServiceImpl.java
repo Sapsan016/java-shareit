@@ -112,7 +112,7 @@ public class BookingServiceImpl {
             }
 
         }
-        log.error("Отсутствует метод для парамета = {}", state);
+        log.error("Отсутствует метод для параметра = {}", state);
         throw new UnavailiableException("Unknown state: UNSUPPORTED_STATUS");
     }
 
@@ -126,6 +126,7 @@ public class BookingServiceImpl {
         switch (state) {
             case "ALL": {                                                     //Все бронирования для вещей пользователя
                 for(Long itemId : itemList) {
+                    System.out.println(itemId);
                     bookingList.addAll(bookingRepository.findByItemIdOrderByStartDesc(itemId));
                 }
                 return bookingList;
@@ -168,7 +169,7 @@ public class BookingServiceImpl {
             }
 
         }
-        log.error("Отсутствует метод для парамета = {}", state);
+        log.error("Отсутствует метод для параметра = {}", state);
         throw new UnavailiableException("Unknown state: UNSUPPORTED_STATUS");
     }
 }

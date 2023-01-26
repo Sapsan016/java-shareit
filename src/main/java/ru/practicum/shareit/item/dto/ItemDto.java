@@ -18,6 +18,8 @@ public class ItemDto {
     boolean available;
     Long owner;
     Long request;
+    LocalDateTime lastBooking;
+    LocalDateTime nextBooking;
 
 
 

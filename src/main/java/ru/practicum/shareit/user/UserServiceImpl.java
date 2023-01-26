@@ -3,10 +3,10 @@ package ru.practicum.shareit.user;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,23 +14,26 @@ import java.util.Optional;
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService {
 
     UserRepository userRepository;
 
-    @Autowired
+
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
+    @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
+    @Override
     public Optional<User> getUserById(long id) {
         return userRepository.findById(id);
     }
 
+    @Override
     public User updateUser(long userId, User user) {
         if (isPresentUser(userId)) {
             User userToUpdate = getUserById(userId).get();
@@ -50,11 +53,13 @@ public class UserServiceImpl {
 
     }
 
+    @Override
     public User createUser(User user) {
         log.info("Пользователь с Id = {} создан", user.getId());
         return userRepository.save(user);
     }
 
+    @Override
     public void deleteUserById(long id) {
         userRepository.deleteById(id);
         log.info("Пользователь с Id = {} удален", id);

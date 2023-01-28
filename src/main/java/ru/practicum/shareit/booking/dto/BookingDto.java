@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
 import ru.practicum.shareit.booking.BookingStatus;
 
 
@@ -22,7 +21,4 @@ public class BookingDto {
     long bookerId;
     long itemId;
     String itemName;
-
-
-
 }

@@ -38,16 +38,26 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> getItems(long userId) {
-        List<Item> itemList = itemRepository.findByOwnerId(userId);
-
+        List<Item> itemList = itemRepository.findByOwnerIdOrderById(userId);
+        boolean isOwner = true;
+        List<Booking> bookingsList = new ArrayList<>();
         for (Item item : itemList) {
-            List<Booking> bookingsList = bookingRepository.findByItemIdOrderByStartDesc(item.getId());
-            for (Booking b : bookingsList) {
-                item.setLastBooking(b.getEnd());
-                item.setNextBooking(b.getStart());
+            if(item.getOwnerId() != userId) {
+                isOwner = false;
+            }
+            bookingsList.addAll(bookingRepository.findByItemIdOrderByStartDesc(item.getId()));
+        }
+        if(!isOwner) {
+            return itemList;
+        }
+        for (Booking b : bookingsList) {
+            for (Item item : itemList) {
+                if (b.getItemId() == item.getId()) {
+                    item.setNextBookingId(bookingsList.get(0).getId());
+                    item.setLastBookingId(bookingsList.get(1).getId());
+                }
             }
         }
-
         return itemList;
     }
 
@@ -68,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item updateItem(long itemId, long userId, Item item) {
-        Item itemToUpdate = getItemById(itemId);
+        Item itemToUpdate = getItemById(itemId, userId);
         if (itemToUpdate.getOwnerId() != userId) {
             log.error("Неверный Id владельца");
             throw new UserNotFoundException("Владелец не найден");
@@ -85,9 +95,19 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item getItemById(long itemId) {
+    public Item getItemById(long itemId, long userId) {
         if (itemRepository.findById(itemId).isPresent()) {
-            return itemRepository.findById(itemId).get();
+            Item item = itemRepository.findById(itemId).get();
+            if(item.getOwnerId() != userId) {
+                return item;
+            }
+            List<Booking> bookings = bookingRepository.findByItemIdOrderByStartDesc(itemId);
+            if(bookings.isEmpty()) {
+                return item;
+            }
+            item.setNextBookingId(bookings.get(0).getId());
+            item.setLastBookingId(bookings.get(1).getId());
+            return item;
         }
         log.error("Вещь с Id = {} не найдена", itemId);
         throw new ItemNotFoundException("Вещь не найдена");

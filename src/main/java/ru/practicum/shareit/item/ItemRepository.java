@@ -9,7 +9,7 @@ import java.util.List;
 
 @Component
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    List<Item> findByOwnerId(long ownerId);
+    List<Item> findByOwnerIdOrderById(long ownerId);
 
     @Query("select id from  Item where ownerId=?1")
     List<Long> findItemIdByOwnerId(long ownerId);

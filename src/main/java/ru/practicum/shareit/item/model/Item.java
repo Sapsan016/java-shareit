@@ -33,9 +33,9 @@ public class Item {
     @Column(name = "request_id")
     Long requestId;
     @Transient
-    LocalDateTime lastBooking;
+    long lastBookingId;
     @Transient
-    LocalDateTime nextBooking;
+    long nextBookingId;
 
     @Override
     public boolean equals(Object o) {

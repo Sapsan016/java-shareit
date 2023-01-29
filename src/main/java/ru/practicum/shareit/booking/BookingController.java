@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
 
 
 import java.util.List;
@@ -14,30 +15,31 @@ import java.util.stream.Collectors;
 public class BookingController {
 
     private final BookingService bookingService;
-    private final BookingMapper bookingMapper;
+
     static final String HEADER = "X-Sharer-User-Id";
 
-    public BookingController(BookingServiceImpl bookingServiceImpl, BookingMapper bookingMapper) {
+    public BookingController(BookingServiceImpl bookingServiceImpl) {
         this.bookingService = bookingServiceImpl;
-        this.bookingMapper = bookingMapper;
+
     }
 
     @PostMapping
-    public BookingDto addBooking(@RequestBody Booking booking,                            //Создание бронирования
+    public BookingDto addBooking(@RequestBody BookingRequestDto bookingRequestDto,                            //Создание бронирования
                                  @RequestHeader(HEADER) long userId) {
-        return bookingMapper.toBookingDto(bookingService.addBooking(booking, userId));
+
+        return BookingMapper.toBookingDto(bookingService.addBooking(bookingRequestDto, userId));
 
     }
 
     @PatchMapping("/{bookingId}")      //Подтверждение или отклонение бонирования
     public BookingDto updateItem(@PathVariable long bookingId, @RequestHeader(HEADER) long userId,
                                  @RequestParam("approved") boolean approved) {
-        return bookingMapper.toBookingDto(bookingService.approveBooking(bookingId, userId, approved));
+        return BookingMapper.toBookingDto(bookingService.approveBooking(bookingId, userId, approved));
     }
 
     @GetMapping("/{bookingId}")        //Получение данных о конкретном бронировании
     public BookingDto getBookingById(@PathVariable long bookingId, @RequestHeader(HEADER) long userId) {
-        return bookingMapper.toBookingDto(bookingService.getBookingById(bookingId, userId));
+        return BookingMapper.toBookingDto(bookingService.getBookingById(bookingId, userId));
 
     }
 
@@ -45,7 +47,7 @@ public class BookingController {
     public List<BookingDto> getUserBooking(@RequestParam(defaultValue = "ALL") String state,
                                            @RequestHeader(HEADER) long userId) {
         return bookingService.getUserBooking(state, userId).stream()
-                .map(bookingMapper::toBookingDto)
+                .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }
 
@@ -53,7 +55,7 @@ public class BookingController {
     public List<BookingDto> getUserItemBooking(@RequestParam(defaultValue = "ALL") String state,
                                                @RequestHeader(HEADER) long userId) {
         return bookingService.getUserItemBooking(state, userId).stream()
-                .map(bookingMapper::toBookingDto)
+                .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }
 }

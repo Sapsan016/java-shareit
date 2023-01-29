@@ -3,6 +3,8 @@ package ru.practicum.shareit.booking;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.Hibernate;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -29,11 +31,13 @@ public class Booking {
     @Column(name = "end_date")
     LocalDateTime end;
 
-    @Column(name = "item_id")
-    Long itemId;
+    @JoinColumn(name = "item_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    Item item;
 
-    @Column(name = "booker_id")
-    Long bookerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "booker_id")
+    User booker;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "booking_status")

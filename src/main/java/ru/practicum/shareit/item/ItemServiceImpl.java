@@ -52,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
         }
         for (Booking b : bookingsList) {
             for (Item item : itemList) {
-                if (b.getItemId() == item.getId()) {
+                if (b.getItem().getId() == item.getId()) {
                     item.setNextBookingId(bookingsList.get(0).getId());
                     item.setLastBookingId(bookingsList.get(1).getId());
                 }
@@ -124,7 +124,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Comment addComment(Comment comment, long userId, long itemId) {
-        if (userId == bookingRepository.findById(itemId).get().getBookerId() &&
+        if (userId == bookingRepository.findById(itemId).get().getBooker().getId() &&
                 bookingRepository.findById(itemId).get().getEnd().isBefore(LocalDateTime.now())) {
             log.info("Добавлен новый отзыв к вещи с Id = {}", itemId);
             return commentRepository.save(comment);

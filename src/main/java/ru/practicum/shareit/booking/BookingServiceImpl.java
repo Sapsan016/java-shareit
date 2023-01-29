@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.item.ItemRepository;
 
@@ -34,14 +36,16 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking addBooking(Booking booking, long userId) {
+    public Booking addBooking(BookingRequestDto bookingRequestDto, long userId) {
         User booker = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Пользоватеь не найден"));
-        Item item = itemRepository.findById(booking.getItemId()).orElseThrow(() ->
-                new ItemNotFoundException(String.format("Вещь с id %s не найдена", booking.getItemId())));
+        Item item = itemRepository.findById(bookingRequestDto.getItemId()).orElseThrow(() ->
+                new ItemNotFoundException(String.format("Вещь с id %s не найдена", bookingRequestDto.getItemId())));
+        Booking booking = BookingMapper.fromRequest(bookingRequestDto);
+
         validateBooking(booker.getId(), booking, item);
-        booking.setBookerId(booker.getId());
+        booking.setBooker(booker);
         booking.setStatus(BookingStatus.WAITING);
-        booking.setItemId(item.getId());
+        booking.setItem(item);
         Booking bookingSaved = bookingRepository.save(booking);
         log.info("Бронирование id = {} сохранено", bookingSaved.getId());
         return bookingSaved;
@@ -72,7 +76,7 @@ public class BookingServiceImpl implements BookingService {
             log.error("Бронирование с id = {} уже подтверждено", bookingId);
             throw new UnavailiableException("Бронирование уже подтверждено");
         }
-        if (itemRepository.findById(bookingToApprove.getItemId()).orElseThrow().getOwnerId() != userId) {
+        if (itemRepository.findById(bookingToApprove.getItem().getId()).orElseThrow().getOwnerId() != userId) {
             throw new InvalidUserException(String.format("Пользователь с id %d не является владельцем вещи.",
                     userId));
         }
@@ -90,8 +94,8 @@ public class BookingServiceImpl implements BookingService {
     public Booking getBookingById(long bookingId, long userId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
                 new BookingNotFoundException(String.format("Бронирование с id %d не найдено.", bookingId)));
-        if (userId == booking.getBookerId() ||
-                userId == itemRepository.findById(booking.getItemId()).orElseThrow().getOwnerId()) {
+        if (userId == booking.getBooker().getId() ||
+                userId == itemRepository.findById(booking.getItem().getId()).orElseThrow().getOwnerId()) {
             return booking;
         }
         throw new UserNotFoundException("Неверное id владельца");

@@ -23,9 +23,11 @@ public class Comment {
     @NotBlank
     String text;
     @NotBlank
-    long item_id;
+    @Column(name = "item_id")
+    long itemId;
     @NotBlank
-    long author_id;
+    @Column(name = "author_id")
+    long authorId;
     @NotBlank
     LocalDateTime created;
 }

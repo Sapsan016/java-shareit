@@ -42,12 +42,12 @@ public class ItemServiceImpl implements ItemService {
         boolean isOwner = true;
         List<Booking> bookingsList = new ArrayList<>();
         for (Item item : itemList) {
-            if(item.getOwnerId() != userId) {
+            if (item.getOwnerId() != userId) {
                 isOwner = false;
             }
             bookingsList.addAll(bookingRepository.findByItemIdOrderByStartDesc(item.getId()));
         }
-        if(!isOwner) {
+        if (!isOwner) {
             return itemList;
         }
         for (Booking b : bookingsList) {
@@ -98,11 +98,11 @@ public class ItemServiceImpl implements ItemService {
     public Item getItemById(long itemId, long userId) {
         if (itemRepository.findById(itemId).isPresent()) {
             Item item = itemRepository.findById(itemId).get();
-            if(item.getOwnerId() != userId) {
+            if (item.getOwnerId() != userId) {
                 return item;
             }
             List<Booking> bookings = bookingRepository.findByItemIdOrderByStartDesc(itemId);
-            if(bookings.isEmpty()) {
+            if (bookings.isEmpty()) {
                 return item;
             }
             item.setNextBookingId(bookings.get(0).getId());

@@ -2,10 +2,7 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
 import ru.practicum.shareit.booking.Booking;
-
-import java.time.LocalDateTime;
 
 
 @Data
@@ -21,8 +18,6 @@ public class ItemDto {
     Long request;
     Booking lastBooking;
     Booking nextBooking;
-
-
 
 
 }

@@ -2,8 +2,8 @@ package ru.practicum.shareit.item.dto;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.booking.BookingService;
 import ru.practicum.shareit.item.model.Item;
+
 @Component
 public class ItemMapper {
     private final BookingRepository bookingRepository;

@@ -3,11 +3,8 @@ package ru.practicum.shareit.booking;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.Hibernate;
-import org.springframework.http.HttpStatus;
 
 import javax.persistence.*;
-import javax.validation.constraints.Future;
-import javax.validation.constraints.FutureOrPresent;
 import java.time.LocalDateTime;
 import java.util.Objects;
 

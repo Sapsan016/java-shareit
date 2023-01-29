@@ -59,6 +59,7 @@ public class ItemController {
                 .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
+
     @PostMapping("/{itemId}/comment")
     public CommentDTO addComment(@Valid @RequestBody Comment comment, @RequestHeader(HEADER) long userId,
                                  @PathVariable long itemId) {

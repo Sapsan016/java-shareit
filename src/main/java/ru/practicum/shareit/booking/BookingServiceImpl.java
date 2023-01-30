@@ -4,8 +4,9 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.booking.dto.BookingMapper;
-import ru.practicum.shareit.booking.dto.BookingRequestDto;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
+import ru.practicum.shareit.booking.dto.BookingAddDto;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.item.ItemRepository;
 
@@ -36,12 +37,12 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking addBooking(BookingRequestDto bookingRequestDto, long userId) {
-        User booker = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Пользоватеь не найден"));
-        Item item = itemRepository.findById(bookingRequestDto.getItemId()).orElseThrow(() ->
-                new ItemNotFoundException(String.format("Вещь с id %s не найдена", bookingRequestDto.getItemId())));
-        Booking booking = BookingMapper.fromRequest(bookingRequestDto);
-
+    public Booking addBooking(BookingAddDto bookingAddDto, long userId) {               //Добавить бронирование
+        User booker = userRepository.findById(userId).orElseThrow(() ->
+                new UserNotFoundException("Пользоватеь не найден"));
+        Item item = itemRepository.findById(bookingAddDto.getItemId()).orElseThrow(() ->
+                new ItemNotFoundException(String.format("Вещь с id %s не найдена", bookingAddDto.getItemId())));
+        Booking booking = BookingMapper.toBooking(bookingAddDto);
         validateBooking(booker.getId(), booking, item);
         booking.setBooker(booker);
         booking.setStatus(BookingStatus.WAITING);
@@ -51,7 +52,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingSaved;
     }
 
-    private void validateBooking(long bookerId, Booking booking, Item item) {
+    private void validateBooking(long bookerId, Booking booking, Item item) {                  //Проверить бронирование
         if (bookerId == item.getOwnerId()) {
             throw new UserNotFoundException("Владелец не может бронировать свои вещи.");
         } else if (!item.getAvailable()) {
@@ -62,14 +63,13 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private boolean validateDate(LocalDateTime startBooking, LocalDateTime endBooking) {
+    private boolean validateDate(LocalDateTime startBooking, LocalDateTime endBooking) {       //Проверить дату и время
         return startBooking.isBefore(LocalDateTime.now()) || endBooking.isBefore(LocalDateTime.now())
                 || endBooking.isBefore(startBooking);
     }
 
     @Override
-    public Booking approveBooking(long bookingId, long userId, boolean approved) {
-
+    public Booking approveBooking(long bookingId, long userId, boolean approved) { //Подтвердить/отклонить бронирование
         Booking bookingToApprove = bookingRepository.findById(bookingId).orElseThrow(() ->
                 new BookingNotFoundException(String.format("Бронирование с id %s не найдено", bookingId)));
         if (bookingToApprove.getStatus().equals(BookingStatus.APPROVED)) {
@@ -91,7 +91,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking getBookingById(long bookingId, long userId) {
+    public Booking getBookingById(long bookingId, long userId) {                           // Получить все бронирования
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
                 new BookingNotFoundException(String.format("Бронирование с id %d не найдено.", bookingId)));
         if (userId == booking.getBooker().getId() ||
@@ -103,7 +103,7 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Override
-    public List<Booking> getUserBooking(String state, long userId) {
+    public List<Booking> getUserBooking(String state, long userId) {       //Получить все бронирования для пользователя
         if (isUserPresent(userId)) {
             log.error("Пользователь с Id = {} не найден", userId);
             throw new UserNotFoundException("Пользователь не найден");
@@ -137,12 +137,12 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getUserItemBooking(String state, long userId) {
+    public List<Booking> getUserItemBooking(String state, long userId) {           //Получить все бронирования для вещи
         if (isUserPresent(userId)) {
             log.error("Пользователь с Id = {} не найден", userId);
             throw new UserNotFoundException("Пользователь не найден");
         }
-        List<Long> itemList = itemRepository.findItemIdByOwnerId(userId);  //Список Id вещей пользователя
+        List<Long> itemList = itemRepository.findItemIdByOwnerId(userId);               //Список Id вещей пользователя
         if (itemList.isEmpty()) {
             throw new UnavailiableException("Данный пользователь не имеет вещей");
         }

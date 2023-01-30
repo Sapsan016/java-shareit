@@ -4,17 +4,18 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.mapper.CommentMapper;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,9 @@ public class ItemServiceImpl implements ItemService {
 
     BookingRepository bookingRepository;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, CommentRepository commentRepository, BookingRepository bookingRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository,
+                           CommentRepository commentRepository,
+                           BookingRepository bookingRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
@@ -53,23 +56,23 @@ public class ItemServiceImpl implements ItemService {
         if (!isOwner) {
             throw new UserNotFoundException("Пользователь не является хозяином вещей");
         }
-        List<ItemDto> dtos = itemList.stream()
+        List<ItemDto> dtoList = itemList.stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
-
         for (Booking b : bookingsList) {
-            for (ItemDto dto : dtos) {
+            for (ItemDto dto : dtoList) {
                 if (b.getItem().getId() == dto.getId()) {
                     dto.setNextBooking(BookingMapper.toBookingDto(bookingsList.get(0)));
                     dto.setLastBooking(BookingMapper.toBookingDto(bookingsList.get(1)));
                 }
             }
         }
-        return dtos;
+        return dtoList;
     }
 
     @Override
-    public Item addItem(Item item, long userId) {
+    public Item addItem(ItemAddDto itemAddDto, long userId) { //Добавить вещь
+        Item item = ItemMapper.toItem(itemAddDto);
         if (item.getAvailable() == null) {
             log.error("Не заполнено поле available");
             throw new UnavailiableException("Поле available не может быть пустым");
@@ -84,50 +87,47 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item updateItem(long itemId, long userId, Item item) {
+    public Item updateItem(long itemId, long userId, ItemAddDto itemAddDto) {
+
         Item itemToUpdate = itemRepository.findById(itemId).orElseThrow(() ->
                 new ItemNotFoundException(String.format("Вещь с id %s не найдено", itemId)));
         if (itemToUpdate.getOwnerId() != userId) {
             log.error("Неверный Id владельца");
             throw new UserNotFoundException("Владелец не найден");
         }
+        Item item = ItemMapper.toItem(itemAddDto);
         if (item.getName() != null)
             itemToUpdate.setName(item.getName());
         if (item.getDescription() != null)
             itemToUpdate.setDescription(item.getDescription());
         if (item.getAvailable() != null)
             itemToUpdate.setAvailable(item.getAvailable());
-
         log.info("Вещь с Id = {} обновлена", itemId);
         return itemRepository.save(itemToUpdate);
     }
 
     @Override
     public ItemDto getItemById(long itemId, long userId) {
-        if (itemRepository.findById(itemId).isPresent()) {
-            Item item = itemRepository.findById(itemId).get();
-            ItemDto itemDto = ItemMapper.toItemDto(item);
-            itemDto.setComments(findItemComments(itemId));
-            if (item.getOwnerId() != userId) {
-                return itemDto;
-            }
-            List<Booking> bookings = bookingRepository.findByItemIdOrderByStartDesc(itemId);
-            if (bookings.isEmpty()) {
-                return itemDto;
-            }
-            if (bookings.size() > 1) {
-                itemDto.setNextBooking(BookingMapper.toBookingDto(bookings.get(0)));
-                itemDto.setLastBooking(BookingMapper.toBookingDto(bookings.get(1)));
-            }
-            if (bookings.size() == 1) {
-                itemDto.setNextBooking(BookingMapper.toBookingDto(bookings.get(0)));
-                itemDto.setLastBooking(BookingMapper.toBookingDto(bookings.get(0)));
-            }
-
+        Item item = itemRepository.findById(itemId).orElseThrow(() ->
+                new ItemNotFoundException(String.format("Вещь с id %s не найдена", itemId)));
+        ItemDto itemDto = ItemMapper.toItemDto(item);
+        itemDto.setComments(findItemComments(itemId));
+        if (item.getOwnerId() != userId) {
             return itemDto;
         }
-        log.error("Вещь с Id = {} не найдена", itemId);
-        throw new ItemNotFoundException("Вещь не найдена");
+        List<Booking> bookings = bookingRepository.findByItemIdOrderByStartDesc(itemId);
+        if (bookings.isEmpty()) {
+            return itemDto;
+        }
+        if (bookings.size() > 1) {
+            itemDto.setNextBooking(BookingMapper.toBookingDto(bookings.get(0)));
+            itemDto.setLastBooking(BookingMapper.toBookingDto(bookings.get(1)));
+        }
+        if (bookings.size() == 1) {
+            itemDto.setNextBooking(BookingMapper.toBookingDto(bookings.get(0)));
+            itemDto.setLastBooking(BookingMapper.toBookingDto(bookings.get(0)));
+        }
+        return itemDto;
     }
 
     @Override
@@ -143,7 +143,7 @@ public class ItemServiceImpl implements ItemService {
     public Comment addComment(CommentAddDto commentAddDto, long userId, long itemId) {
         Comment comment = CommentMapper.toComment(commentAddDto);
         System.out.println(comment);
-        if (validateCommentAuthorAndDate(userId,itemId)) {
+        if (validateCommentAuthorAndDate(userId, itemId)) {
             comment.setItemId(itemId);
             comment.setAuthor(userRepository.findById(userId).orElseThrow(()
                     -> new UserNotFoundException("Владелец не найден")));
@@ -170,5 +170,4 @@ public class ItemServiceImpl implements ItemService {
         }
         return !booking.getEnd().isBefore(LocalDateTime.now());
     }
-
 }

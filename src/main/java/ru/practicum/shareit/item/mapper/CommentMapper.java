@@ -1,5 +1,7 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.item.mapper;
 
+import ru.practicum.shareit.item.dto.CommentAddDto;
+import ru.practicum.shareit.item.dto.CommentDTO;
 import ru.practicum.shareit.item.model.Comment;
 
 

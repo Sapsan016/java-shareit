@@ -5,8 +5,6 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 
@@ -23,10 +21,7 @@ public class User {
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    @NotBlank
     String name;
-    @NotBlank
-    @Email
     String email;
 
     @Override

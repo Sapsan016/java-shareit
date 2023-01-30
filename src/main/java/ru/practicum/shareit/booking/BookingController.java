@@ -2,8 +2,8 @@ package ru.practicum.shareit.booking;
 
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingMapper;
-import ru.practicum.shareit.booking.dto.BookingRequestDto;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
+import ru.practicum.shareit.booking.dto.BookingAddDto;
 
 
 import java.util.List;
@@ -24,25 +24,25 @@ public class BookingController {
     }
 
     @PostMapping
-    public BookingDto addBooking(@RequestBody BookingRequestDto bookingRequestDto,               //Создание бронирования
+    public BookingDto addBooking(@RequestBody BookingAddDto bookingAddDto,            //Добавление бронирования
                                  @RequestHeader(HEADER) long userId) {
-        return BookingMapper.toBookingDto(bookingService.addBooking(bookingRequestDto, userId));
+        return BookingMapper.toBookingDto(bookingService.addBooking(bookingAddDto, userId));
 
     }
 
-    @PatchMapping("/{bookingId}")      //Подтверждение или отклонение бонирования
+    @PatchMapping("/{bookingId}")                                          //Подтверждение или отклонение бонирования
     public BookingDto updateItem(@PathVariable long bookingId, @RequestHeader(HEADER) long userId,
                                  @RequestParam("approved") boolean approved) {
         return BookingMapper.toBookingDto(bookingService.approveBooking(bookingId, userId, approved));
     }
 
-    @GetMapping("/{bookingId}")        //Получение данных о конкретном бронировании
+    @GetMapping("/{bookingId}")                                          //Получение данных о конкретном бронировании
     public BookingDto getBookingById(@PathVariable long bookingId, @RequestHeader(HEADER) long userId) {
         return BookingMapper.toBookingDto(bookingService.getBookingById(bookingId, userId));
 
     }
 
-    @GetMapping()        //Получение списка всех бронирований текущего пользователя
+    @GetMapping()                                          //Получение списка всех бронирований текущего пользователя
     public List<BookingDto> getUserBooking(@RequestParam(defaultValue = "ALL") String state,
                                            @RequestHeader(HEADER) long userId) {
         return bookingService.getUserBooking(state, userId).stream()

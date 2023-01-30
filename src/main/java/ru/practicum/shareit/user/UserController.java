@@ -2,9 +2,9 @@ package ru.practicum.shareit.user;
 
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.user.dto.UserAddDto;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserMapper;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.mapper.UserMapper;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -15,39 +15,39 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/users")
 public class UserController {
 
-    private final UserServiceImpl userServiceImpl;
+    private final UserService userService;
 
-    public UserController(UserServiceImpl userServiceImpl) {
-        this.userServiceImpl = userServiceImpl;
+    public UserController(UserServiceImpl userService) {
+        this.userService = userService;
     }
 
     @GetMapping()
-    public List<UserDto> getAllUsers() {
-        return userServiceImpl.getAllUsers().stream()
+    public List<UserDto> getAllUsers() {                                                  //Получить всех пользователей
+        return userService.getAllUsers().stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}")                                                                      //Получить пользователя
     public UserDto getUserById(@PathVariable("id") long id) {
-        if (userServiceImpl.getUserById(id).isPresent()) {
-            return UserMapper.toUserDto(userServiceImpl.getUserById(id).get());
+        if (userService.getUserById(id).isPresent()) {
+            return UserMapper.toUserDto(userService.getUserById(id).get());
         } else
             throw new UserNotFoundException("Пользователь не найден");
     }
 
-    @PatchMapping("/{id}")
-    public UserDto updateUser(@RequestBody User user, @PathVariable("id") long userId) {
-        return UserMapper.toUserDto(userServiceImpl.updateUser(userId, user));
+    @PatchMapping("/{id}")                                                                   //Обновить пользователя
+    public UserDto updateUser(@RequestBody UserAddDto userAddDto, @PathVariable("id") long userId) {
+        return UserMapper.toUserDto(userService.updateUser(userId, userAddDto));
     }
 
-    @PostMapping()
-    public UserDto createUser(@Valid @RequestBody User user) {
-        return UserMapper.toUserDto(userServiceImpl.createUser(user));
+    @PostMapping()                                                                           //Добавить пользователя
+    public UserDto addUser(@Valid @RequestBody UserAddDto userAddDto) {
+        return UserMapper.toUserDto(userService.addUser(userAddDto));
     }
 
     @DeleteMapping("/{id}")
     public void deleteUserById(@PathVariable("id") int id) {
-        userServiceImpl.deleteUserById(id);
+        userService.deleteUserById(id);
     }
 }

@@ -3,11 +3,8 @@ package ru.practicum.shareit.item.model;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.Hibernate;
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.dto.BookingDto;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Getter
@@ -23,11 +20,8 @@ public class Item {
     @Column(name = "item_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    @NotBlank
     String name;
-    @NotBlank
     String description;
-
     Boolean available;
     @Column(name = "owner_id")
     Long ownerId;

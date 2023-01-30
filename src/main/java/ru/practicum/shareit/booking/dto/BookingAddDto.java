@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
-public class BookingRequestDto {
-    long id;
+public class BookingAddDto {
+
     long itemId;
     LocalDateTime start;
     LocalDateTime end;

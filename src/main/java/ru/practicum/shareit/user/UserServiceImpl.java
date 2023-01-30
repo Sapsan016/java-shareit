@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.user.dto.UserAddDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -34,38 +36,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(long userId, User user) {
-        if (isPresentUser(userId)) {
-            User userToUpdate = getUserById(userId).get();
-            if (checkEmail(user)) {
-                log.error("Такие данные уже существуют");
-                throw new ValidationException("Такие данные уже существуют");
-            }
-            if (user.getName() != null)
-                userToUpdate.setName(user.getName());
-            if (user.getEmail() != null)
-                userToUpdate.setEmail(user.getEmail());
-            log.info("Пользователь с Id = {} обновлен", userId);
-            return userRepository.save(userToUpdate);
+    public User updateUser(long userId, UserAddDto userAddDto) {                               //Обновить пользователя
+        User user = UserMapper.toUser(userAddDto);
+        User userToUpdate = getUserById(userId).orElseThrow(() ->
+                new UserNotFoundException(String.format("Пользователь с id %s не найдена", userId)));
+        if (checkEmail(user)) {
+            log.error("Такие данные уже существуют");
+            throw new ValidationException("Такие данные уже существуют");
         }
-        log.error("Пользователь с Id = {} не найден", userId);
-        throw new UserNotFoundException("Пользователь не найден");
-
+        if (user.getName() != null)
+            userToUpdate.setName(user.getName());
+        if (user.getEmail() != null)
+            userToUpdate.setEmail(user.getEmail());
+        log.info("Пользователь с Id = {} обновлен", userId);
+        return userRepository.save(userToUpdate);
     }
 
     @Override
-    public User createUser(User user) {
+    public User addUser(UserAddDto userAddDto) {                                                //Добавить пользователя
+        User user = UserMapper.toUser(userAddDto);
+        userRepository.save(user);
         log.info("Пользователь с Id = {} создан", user.getId());
-        return userRepository.save(user);
+        return user;
     }
 
     @Override
-    public void deleteUserById(long id) {
+    public void deleteUserById(long id) {                                                        //Удалить пользователя
         userRepository.deleteById(id);
         log.info("Пользователь с Id = {} удален", id);
     }
 
-    private boolean checkEmail(User user) {
+    private boolean checkEmail(User user) {                                                           //Проверить email
         List<User> users = getAllUsers();
         for (User u : users) {
             if (u.getEmail().equals(user.getEmail())) {
@@ -73,9 +74,5 @@ public class UserServiceImpl implements UserService {
             }
         }
         return false;
-    }
-
-    private boolean isPresentUser(long id) {
-        return getUserById(id).isPresent();
     }
 }

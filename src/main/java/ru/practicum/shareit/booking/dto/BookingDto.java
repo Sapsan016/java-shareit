@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 public class BookingDto {
 
     long id;
+    long bookerId;
     User booker;
     Item item;
     LocalDateTime start;

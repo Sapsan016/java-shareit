@@ -32,10 +32,10 @@ public class Booking {
     LocalDateTime end;
 
     @JoinColumn(name = "item_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     Item item;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "booker_id")
     User booker;
 

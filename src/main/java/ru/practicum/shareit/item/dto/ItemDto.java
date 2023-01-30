@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.dto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.dto.BookingDto;
 
 
 @Data
@@ -16,8 +17,8 @@ public class ItemDto {
     boolean available;
     Long owner;
     Long request;
-    Booking lastBooking;
-    Booking nextBooking;
+    BookingDto lastBooking;
+    BookingDto nextBooking;
 
 
 }

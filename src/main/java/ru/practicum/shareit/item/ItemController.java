@@ -20,43 +20,38 @@ import java.util.stream.Collectors;
 public class ItemController {
 
     final ItemService itemService;
-    final ItemMapper itemMapper;
-
     static final String HEADER = "X-Sharer-User-Id";
 
 
-    public ItemController(ItemServiceImpl itemService, ItemMapper itemMapper) {
+    public ItemController(ItemServiceImpl itemService) {
         this.itemService = itemService;
-        this.itemMapper = itemMapper;
     }
 
     @PostMapping
     public ItemDto addItem(@Valid @RequestBody Item item, @RequestHeader(HEADER) long userId) {
-        return itemMapper.toItemDto(itemService.addItem(item, userId));
+        return ItemMapper.toItemDto(itemService.addItem(item, userId));
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@Valid @PathVariable long itemId, @RequestHeader(HEADER) long userId,
                               @RequestBody Item item) {
-        return itemMapper.toItemDto(itemService.updateItem(itemId, userId, item));
+        return ItemMapper.toItemDto(itemService.updateItem(itemId, userId, item));
     }
 
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@PathVariable long itemId, @RequestHeader(HEADER) long userId) {
-        return itemMapper.toItemDto(itemService.getItemById(itemId, userId));
+        return itemService.getItemById(itemId, userId);
     }
 
     @GetMapping
     public List<ItemDto> getItems(@RequestHeader(HEADER) long userId) {
-        return itemService.getItems(userId).stream()
-                .map(itemMapper::toItemDto)
-                .collect(Collectors.toList());
+        return itemService.getItems(userId);
     }
 
     @GetMapping("/search")
     public List<ItemDto> searchItems(@RequestParam("text") String text) {
         return itemService.searchItems(text).stream()
-                .map(itemMapper::toItemDto)
+                .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 

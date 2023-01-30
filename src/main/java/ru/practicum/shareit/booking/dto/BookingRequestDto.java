@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
@@ -14,7 +15,6 @@ public class BookingRequestDto {
     long itemId;
     LocalDateTime start;
     LocalDateTime end;
-
 
 
 }

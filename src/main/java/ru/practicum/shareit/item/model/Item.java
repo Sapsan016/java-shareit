@@ -3,6 +3,8 @@ package ru.practicum.shareit.item.model;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.Hibernate;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.dto.BookingDto;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -31,10 +33,6 @@ public class Item {
     Long ownerId;
     @Column(name = "request_id")
     Long requestId;
-    @Transient
-    long lastBookingId;
-    @Transient
-    long nextBookingId;
 
     @Override
     public boolean equals(Object o) {

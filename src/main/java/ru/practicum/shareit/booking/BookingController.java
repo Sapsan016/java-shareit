@@ -24,9 +24,8 @@ public class BookingController {
     }
 
     @PostMapping
-    public BookingDto addBooking(@RequestBody BookingRequestDto bookingRequestDto,                            //Создание бронирования
+    public BookingDto addBooking(@RequestBody BookingRequestDto bookingRequestDto,               //Создание бронирования
                                  @RequestHeader(HEADER) long userId) {
-
         return BookingMapper.toBookingDto(bookingService.addBooking(bookingRequestDto, userId));
 
     }

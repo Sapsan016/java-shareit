@@ -6,9 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.exception.ItemNotFoundException;
-import ru.practicum.shareit.exception.UnavailiableException;
-import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.exception.*;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
@@ -16,6 +17,7 @@ import ru.practicum.shareit.user.UserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -37,7 +39,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> getItems(long userId) {
+    public List<ItemDto> getItems(long userId) {
         List<Item> itemList = itemRepository.findByOwnerIdOrderById(userId);
         boolean isOwner = true;
         List<Booking> bookingsList = new ArrayList<>();
@@ -48,17 +50,21 @@ public class ItemServiceImpl implements ItemService {
             bookingsList.addAll(bookingRepository.findByItemIdOrderByStartDesc(item.getId()));
         }
         if (!isOwner) {
-            return itemList;
+            throw new UserNotFoundException("Пользователь не является хозяином вещей");
         }
+        List<ItemDto> dtos = itemList.stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
+
         for (Booking b : bookingsList) {
-            for (Item item : itemList) {
-                if (b.getItem().getId() == item.getId()) {
-                    item.setNextBookingId(bookingsList.get(0).getId());
-                    item.setLastBookingId(bookingsList.get(1).getId());
+            for (ItemDto dto : dtos) {
+                if (b.getItem().getId() == dto.getId()) {
+                    dto.setNextBooking(BookingMapper.toBookingDto(bookingsList.get(0)));
+                    dto.setLastBooking(BookingMapper.toBookingDto(bookingsList.get(1)));
                 }
             }
         }
-        return itemList;
+        return dtos;
     }
 
     @Override
@@ -78,7 +84,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item updateItem(long itemId, long userId, Item item) {
-        Item itemToUpdate = getItemById(itemId, userId);
+        Item itemToUpdate = itemRepository.findById(itemId).orElseThrow(() ->
+                new ItemNotFoundException(String.format("Вещь с id %s не найдено", itemId)));
         if (itemToUpdate.getOwnerId() != userId) {
             log.error("Неверный Id владельца");
             throw new UserNotFoundException("Владелец не найден");
@@ -95,19 +102,21 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item getItemById(long itemId, long userId) {
+    public ItemDto getItemById(long itemId, long userId) {
         if (itemRepository.findById(itemId).isPresent()) {
             Item item = itemRepository.findById(itemId).get();
+            ItemDto dto = ItemMapper.toItemDto(item);
             if (item.getOwnerId() != userId) {
-                return item;
+                return dto;
             }
             List<Booking> bookings = bookingRepository.findByItemIdOrderByStartDesc(itemId);
+
             if (bookings.isEmpty()) {
-                return item;
+                return dto;
             }
-            item.setNextBookingId(bookings.get(0).getId());
-            item.setLastBookingId(bookings.get(1).getId());
-            return item;
+            dto.setNextBooking(BookingMapper.toBookingDto(bookings.get(0)));
+            dto.setLastBooking(BookingMapper.toBookingDto(bookings.get(1)));
+            return dto;
         }
         log.error("Вещь с Id = {} не найдена", itemId);
         throw new ItemNotFoundException("Вещь не найдена");

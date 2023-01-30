@@ -53,12 +53,12 @@ public class BookingServiceImpl implements BookingService {
 
     private void validateBooking(long bookerId, Booking booking, Item item) {
         if (bookerId == item.getOwnerId()) {
-            throw new UnavailiableException("Владелец не может бронировать свои вещи.");
+            throw new UserNotFoundException("Владелец не может бронировать свои вещи.");
         } else if (!item.getAvailable()) {
             throw new UnavailiableException(String.format("Вещь с id %d не доступна для бронирования.",
                     item.getId()));
         } else if (validateDate(booking.getStart(), booking.getEnd())) {
-            throw new InvalidDataException("Неравлиьное время начала или конца бронирования.");
+            throw new InvalidDataException("Неправильное время начала или конца бронирования.");
         }
     }
 
@@ -77,7 +77,7 @@ public class BookingServiceImpl implements BookingService {
             throw new UnavailiableException("Бронирование уже подтверждено");
         }
         if (itemRepository.findById(bookingToApprove.getItem().getId()).orElseThrow().getOwnerId() != userId) {
-            throw new InvalidUserException(String.format("Пользователь с id %d не является владельцем вещи.",
+            throw new UserNotFoundException(String.format("Пользователь с id %d не является владельцем вещи.",
                     userId));
         }
         if (approved) {

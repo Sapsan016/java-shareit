@@ -2,9 +2,9 @@ package ru.practicum.shareit.item.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Getter
@@ -20,14 +20,15 @@ public class Comment {
     @Column(name = "comment_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    @NotBlank
+
     String text;
-    @NotBlank
+
     @Column(name = "item_id")
     long itemId;
-    @NotBlank
-    @Column(name = "author_id")
-    long authorId;
-    @NotBlank
+
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    User author;
+
     LocalDateTime created;
 }

@@ -9,8 +9,19 @@ public class CommentMapper {
                 comment.getId(),
                 comment.getText(),
                 comment.getItemId(),
-                comment.getAuthorId(),
+                comment.getAuthor().getId(),
+                comment.getAuthor().getName(),
                 comment.getCreated()
+        );
+    }
+
+    public static Comment toComment(CommentAddDto commentAddDto) {
+        return new Comment(
+                0,
+                commentAddDto.getText(),
+                0,
+                null,
+                null
         );
     }
 }

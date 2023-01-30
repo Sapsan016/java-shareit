@@ -113,13 +113,16 @@ public class BookingServiceImpl implements BookingService {
                 return bookingRepository.findByBookerIdOrderByStartDesc(userId);
             }
             case "PAST": {                                                                   // Завершенные бронирования
-                return bookingRepository.findByBookerIdAndEndIsBeforeOrderByEndDesc(userId, LocalDateTime.now());
+                return bookingRepository.findByBookerIdAndEndIsBeforeOrderByEndDesc(userId,
+                        LocalDateTime.now());
             }
             case "FUTURE": {                                                                  //Будущие бронирования
-                return bookingRepository.findByBookerIdAndStartIsAfterOrderByEndDesc(userId, LocalDateTime.now());
+                return bookingRepository.findByBookerIdAndStartIsAfterOrderByEndDesc(userId,
+                        LocalDateTime.now());
             }
             case "CURRENT": {                                                                  //Текущие бронирования
-                return bookingRepository.findByBookerIdAndEndIsAfterOrderByEndDesc(userId, LocalDateTime.now());
+                return bookingRepository.findByBookerIdAndEndIsAfterOrderByEndDesc(userId,
+                        LocalDateTime.now());
             }
             case "WAITING": {                                                          //Не подтвержденные бонирования
                 return bookingRepository.findByBookerIdAndStatusIsOrderByStartDesc(userId, BookingStatus.WAITING);
@@ -155,21 +158,25 @@ public class BookingServiceImpl implements BookingService {
             case "PAST": {                                            // Завершенные бронирования для вещей пользователя
                 for (Long itemId : itemList) {
                     bookingList.addAll(bookingRepository
-                            .findByItemIdAndEndIsBeforeOrderByEndDesc(itemId, LocalDateTime.now()));
+                            .findByItemIdAndEndIsBeforeOrderByEndDesc(itemId,
+                                    LocalDateTime.now()));
                 }
                 return bookingList;
             }
             case "FUTURE": {                                              //Будущие бронирования для вещей пользователя
                 for (Long itemId : itemList) {
                     bookingList.addAll(bookingRepository
-                            .findByItemIdAndStartIsAfterOrderByEndDesc(itemId, LocalDateTime.now()));
+                            .findByItemIdAndStartIsAfterOrderByEndDesc(itemId,
+                                    LocalDateTime.now())
+                    );
                 }
                 return bookingList;
             }
             case "CURRENT": {                                              //Текущие бронированиядля вещей пользователя
                 for (Long itemId : itemList) {
                     bookingList.addAll(bookingRepository
-                            .findByItemIdAndEndIsAfterOrderByEndDesc(itemId, LocalDateTime.now()));
+                            .findByItemIdAndEndIsAfterOrderByEndDesc(itemId,
+                                    LocalDateTime.now()));
                 }
                 return bookingList;
             }

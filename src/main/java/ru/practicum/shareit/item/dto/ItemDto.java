@@ -5,6 +5,8 @@ import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.dto.BookingDto;
 
+import java.util.List;
+
 
 @Data
 @AllArgsConstructor
@@ -19,6 +21,7 @@ public class ItemDto {
     Long request;
     BookingDto lastBooking;
     BookingDto nextBooking;
+    List<CommentDTO> comments;
 
 
 }

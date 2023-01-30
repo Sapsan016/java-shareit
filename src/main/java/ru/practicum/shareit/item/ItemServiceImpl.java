@@ -6,14 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.exception.*;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,18 +106,25 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto getItemById(long itemId, long userId) {
         if (itemRepository.findById(itemId).isPresent()) {
             Item item = itemRepository.findById(itemId).get();
-            ItemDto dto = ItemMapper.toItemDto(item);
+            ItemDto itemDto = ItemMapper.toItemDto(item);
+            itemDto.setComments(findItemComments(itemId));
             if (item.getOwnerId() != userId) {
-                return dto;
+                return itemDto;
             }
             List<Booking> bookings = bookingRepository.findByItemIdOrderByStartDesc(itemId);
-
             if (bookings.isEmpty()) {
-                return dto;
+                return itemDto;
             }
-            dto.setNextBooking(BookingMapper.toBookingDto(bookings.get(0)));
-            dto.setLastBooking(BookingMapper.toBookingDto(bookings.get(1)));
-            return dto;
+            if (bookings.size() > 1) {
+                itemDto.setNextBooking(BookingMapper.toBookingDto(bookings.get(0)));
+                itemDto.setLastBooking(BookingMapper.toBookingDto(bookings.get(1)));
+            }
+            if (bookings.size() == 1) {
+                itemDto.setNextBooking(BookingMapper.toBookingDto(bookings.get(0)));
+                itemDto.setLastBooking(BookingMapper.toBookingDto(bookings.get(0)));
+            }
+
+            return itemDto;
         }
         log.error("Вещь с Id = {} не найдена", itemId);
         throw new ItemNotFoundException("Вещь не найдена");
@@ -132,13 +140,35 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Comment addComment(Comment comment, long userId, long itemId) {
-        if (userId == bookingRepository.findById(itemId).get().getBooker().getId() &&
-                bookingRepository.findById(itemId).get().getEnd().isBefore(LocalDateTime.now())) {
+    public Comment addComment(CommentAddDto commentAddDto, long userId, long itemId) {
+        Comment comment = CommentMapper.toComment(commentAddDto);
+        System.out.println(comment);
+        if (validateCommentAuthorAndDate(userId,itemId)) {
+            comment.setItemId(itemId);
+            comment.setAuthor(userRepository.findById(userId).orElseThrow(()
+                    -> new UserNotFoundException("Владелец не найден")));
+            comment.setCreated(LocalDateTime.now());
+            System.out.println(comment);
             log.info("Добавлен новый отзыв к вещи с Id = {}", itemId);
             return commentRepository.save(comment);
         }
-        log.error("Невеный Id пользователя или срок аенды не завершен");
-        throw new UserNotFoundException("Невеный Id пользователя");
+        log.error("Неверные данные бронирования");
+        throw new UnavailiableException("Невозможно добавить отзыв. Проверьте данные бронирования");
     }
+
+    @Override
+    public List<CommentDTO> findItemComments(long itemId) {
+        List<Comment> comments = commentRepository.findByItemId(itemId);
+        return comments.stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
+    }
+
+    private boolean validateCommentAuthorAndDate(long userId, long itemId) {
+        Booking booking = bookingRepository.findById(itemId).orElseThrow(() ->
+                new BookingNotFoundException(String.format("Бронирование с id %s не найдено", itemId)));
+        if (userId != booking.getBooker().getId() || (!booking.getStatus().equals(BookingStatus.APPROVED))) {
+            return false;
+        }
+        return !booking.getEnd().isBefore(LocalDateTime.now());
+    }
+
 }

@@ -121,8 +121,8 @@ public class BookingServiceImpl implements BookingService {
                         LocalDateTime.now());
             }
             case "CURRENT": {                                                                  //Текущие бронирования
-                return bookingRepository.findByBookerIdAndEndIsAfterOrderByEndDesc(userId,
-                        LocalDateTime.now());
+                return bookingRepository.findByBookerIdAndStartBeforeAndEndIsAfterOrderByEndDesc(userId,
+                        LocalDateTime.now(), LocalDateTime.now());
             }
             case "WAITING": {                                                          //Не подтвержденные бонирования
                 return bookingRepository.findByBookerIdAndStatusIsOrderByStartDesc(userId, BookingStatus.WAITING);
@@ -175,8 +175,8 @@ public class BookingServiceImpl implements BookingService {
             case "CURRENT": {                                              //Текущие бронированиядля вещей пользователя
                 for (Long itemId : itemList) {
                     bookingList.addAll(bookingRepository
-                            .findByItemIdAndEndIsAfterOrderByEndDesc(itemId,
-                                    LocalDateTime.now()));
+                            .findByItemIdAndStartBeforeAndEndIsAfterOrderByEndDesc(itemId,
+                                    LocalDateTime.now(), LocalDateTime.now()));
                 }
                 return bookingList;
             }

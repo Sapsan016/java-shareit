@@ -1,41 +1,19 @@
 package ru.practicum.shareit.user;
 
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserAddDto;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
-@Service
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class UserService {
+public interface UserService {
+    List<User> getAllUsers();
 
-    UserRepository userRepository;
+    Optional<User> getUserById(long id);
 
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    User updateUser(long userId, UserAddDto userAddDto);
 
-    public List<UserDto> getAllUsers() {
-        return userRepository.getAllUsers();
-    }
+    User addUser(UserAddDto userAddDto);
 
-    public UserDto getUserById(long id) {
-        return userRepository.getUserById(id);
-    }
-
-    public UserDto updateUser(long userId, User user) {
-        return userRepository.updateUser(userId, user);
-    }
-
-    public UserDto createUser(User user) {
-        return userRepository.createUser(user);
-    }
-
-    public void deleteUserById(long id) {
-        userRepository.deleteUserById(id);
-    }
+    void deleteUserById(long id);
 }

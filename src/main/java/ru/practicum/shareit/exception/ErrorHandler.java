@@ -22,8 +22,29 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse bookingNotFoundExceptionResponse(final BookingNotFoundException e) {
+        return new ErrorResponse(e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse unavailableExceptionResponse(final UnavailiableException e) {
+        return new ErrorResponse(e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse invalidDataExceptionResponse(final InvalidDataException e) {
+        return new ErrorResponse(e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse invalidUserExceptionResponse(final InvalidUserException e) {
         return new ErrorResponse(e.getMessage()
         );
     }

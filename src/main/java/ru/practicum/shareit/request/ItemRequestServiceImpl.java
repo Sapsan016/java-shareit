@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.request.dto.ItemRequestAddDto;
-import ru.practicum.shareit.request.dto.ItemRequestRepository;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserRepository;
@@ -29,6 +28,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequest addRequest(ItemRequestAddDto itemRequestAddDto, long userId) {
         ItemRequest itemRequest = ItemRequestMapper.toItemRequest(itemRequestAddDto);
+        System.out.println(itemRequest);
         User requester = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("Пользоватеь не найден"));
         itemRequest.setRequester(requester);

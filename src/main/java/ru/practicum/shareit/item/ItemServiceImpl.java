@@ -90,7 +90,7 @@ public class ItemServiceImpl implements ItemService {
     public Item updateItem(long itemId, long userId, ItemAddDto itemAddDto) {
 
         Item itemToUpdate = itemRepository.findById(itemId).orElseThrow(() ->
-                new ItemNotFoundException(String.format("Вещь с id %s не найдено", itemId)));
+                new ItemRequestNotFoundException(String.format("Вещь с id %s не найдено", itemId)));
         if (itemToUpdate.getOwnerId() != userId) {
             log.error("Неверный Id владельца");
             throw new UserNotFoundException("Владелец не найден");
@@ -109,7 +109,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getItemById(long itemId, long userId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
-                new ItemNotFoundException(String.format("Вещь с id %s не найдена", itemId)));
+                new ItemRequestNotFoundException(String.format("Вещь с id %s не найдена", itemId)));
         ItemDto itemDto = ItemMapper.toItemDto(item);
         itemDto.setComments(findItemComments(itemId));
         if (item.getOwnerId() != userId) {

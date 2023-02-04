@@ -29,6 +29,7 @@ public class ItemRequestController {
     @PostMapping
     public ItemRequestDto addRequest(@Valid @RequestBody ItemRequestAddDto itemRequestAddDto,  //добавить запрос
                                      @RequestHeader(HEADER) long userId) {
+        System.out.println(itemRequestAddDto.toString());
         return ItemRequestMapper.toItemRequestDto(requestService.addRequest(itemRequestAddDto, userId));
     }
 

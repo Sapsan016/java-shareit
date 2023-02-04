@@ -41,7 +41,7 @@ public class BookingServiceImpl implements BookingService {
         User booker = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("Пользоватеь не найден"));
         Item item = itemRepository.findById(bookingAddDto.getItemId()).orElseThrow(() ->
-                new ItemNotFoundException(String.format("Вещь с id %s не найдена", bookingAddDto.getItemId())));
+                new ItemRequestNotFoundException(String.format("Вещь с id %s не найдена", bookingAddDto.getItemId())));
         Booking booking = BookingMapper.toBooking(bookingAddDto);
         validateBooking(booker.getId(), booking, item);
         booking.setBooker(booker);

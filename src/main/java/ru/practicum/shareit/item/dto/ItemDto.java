@@ -17,7 +17,7 @@ public class ItemDto {
     String description;
     boolean available;
     Long owner;
-    Long request;
+    Long requestId;
     BookingDto lastBooking;
     BookingDto nextBooking;
     List<CommentDTO> comments;

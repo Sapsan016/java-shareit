@@ -11,6 +11,7 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -27,10 +28,19 @@ public class ItemRequestController {
     }
 
     @PostMapping
-    public ItemRequestDto addRequest(@Valid @RequestBody ItemRequestAddDto itemRequestAddDto,  //добавить запрос
+    public ItemRequestDto addRequest(@Valid @RequestBody ItemRequestAddDto itemRequestAddDto,         //добавить запрос
                                      @RequestHeader(HEADER) long userId) {
-        System.out.println(itemRequestAddDto.toString());
         return ItemRequestMapper.toItemRequestDto(requestService.addRequest(itemRequestAddDto, userId));
+    }
+    @GetMapping("/{requestId}")
+    public ItemRequestDto getRequestById(@PathVariable long requestId,                               // получить запрос
+                                     @RequestHeader(HEADER) long userId) {
+        return requestService.getRequestById(requestId, userId);
+    }
+
+    @GetMapping
+    public List<ItemRequestDto> getRequests(@RequestHeader(HEADER) long userId) {      //получить список своих запросов
+        return null;
     }
 
 }

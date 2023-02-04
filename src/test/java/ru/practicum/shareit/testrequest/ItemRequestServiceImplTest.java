@@ -36,9 +36,12 @@ public class ItemRequestServiceImplTest {
 
     long ID = 1L;
 
-    ItemRequestAddDto itemRequestAddDto1 = new ItemRequestAddDto("Test description 1");
 
-    ItemRequestAddDto itemRequestAddDto2 = new ItemRequestAddDto("Test description 2");
+    ItemRequestAddDto itemRequestAddDto1 = new ItemRequestAddDto("Test description 1",
+            null, null);
+
+    ItemRequestAddDto itemRequestAddDto2 = new ItemRequestAddDto("Test description 2",
+            null, null);
     UserAddDto userAddDto1 = new UserAddDto("testUser1", "user1@email.com");
 
     @Test

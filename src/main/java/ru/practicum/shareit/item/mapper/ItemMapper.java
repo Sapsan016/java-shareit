@@ -15,7 +15,7 @@ public class ItemMapper {
                 itemAddDto.getDescription(),
                 itemAddDto.getAvailable(),
                 null,
-                itemAddDto.getRequest()
+                itemAddDto.getRequestId()
         );
     }
 

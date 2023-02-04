@@ -4,9 +4,11 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Data
@@ -17,4 +19,5 @@ public class ItemRequestDto {
     String description;
     User requester;
     LocalDateTime created;
+    List<Item> items;
 }

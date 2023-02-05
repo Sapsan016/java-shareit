@@ -16,6 +16,7 @@ import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -45,18 +46,34 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public ItemRequestDto getRequestById(long requestId, long userId) {
         findRequester(userId);
         log.info("Выполняется поиск запроса с Id = {}", requestId);
-        ItemRequest request =  requestRepository.findById(requestId).orElseThrow(() ->
+        ItemRequest request = requestRepository.findById(requestId).orElseThrow(() ->
                 new ItemRequestNotFoundException(String.format("Запрос с id %s не найден", requestId)));
-        List<Item> items = itemRepository.findByRequestId(requestId);
+        List<Item> items = findItems(requestId);
         ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(request);
         itemRequestDto.setItems(items);
         return itemRequestDto;
-
     }
+
+    @Override
+    public List<ItemRequestDto> getRequestsForUser(long userId) {
+        findRequester(userId);
+        log.info("Выполняется поиск всех запросов для пользователя с Id = {}", userId);
+        List<ItemRequest> requestList = requestRepository.findByRequesterIdOrderByCreatedDesc(userId);
+        return requestList.stream()
+                .map(ItemRequestMapper::toItemRequestDto)
+                .peek((requestDto) -> requestDto.setItems(findItems(requestDto.getId())))
+                .collect(Collectors.toList());
+    }
+
     private User findRequester(long userId) {
         log.info("Выполняется поиск пользоватля с Id = {}", userId);
         return userRepository.findById(userId).orElseThrow(() ->
-                new UserNotFoundException("Пользоватеь не найден"));
+                new UserNotFoundException("Пользователь не найден"));
+    }
+
+    private List<Item> findItems(long requestId) {
+        log.info("Выполняется поиск вещей добавленных по запросу с id = {}", requestId);
+        return itemRepository.findByRequestId(requestId);
     }
 
 }

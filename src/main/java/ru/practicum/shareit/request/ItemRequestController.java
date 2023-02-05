@@ -3,9 +3,6 @@ package ru.practicum.shareit.request;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.ItemAddDto;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.request.dto.ItemRequestAddDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
@@ -40,7 +37,7 @@ public class ItemRequestController {
 
     @GetMapping
     public List<ItemRequestDto> getRequests(@RequestHeader(HEADER) long userId) {      //получить список своих запросов
-        return null;
+        return requestService.getRequestsForUser(userId);
     }
 
 }

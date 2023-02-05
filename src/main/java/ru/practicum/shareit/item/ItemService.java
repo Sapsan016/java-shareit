@@ -24,5 +24,7 @@ public interface ItemService {
     Comment addComment(CommentAddDto comment, long userId, long itemId);
 
     List<CommentDTO> findItemComments(long itemId);
+
+    List<ItemDto> getItemsWithParam(long userId, Long from, Long size);
 }
 

@@ -41,8 +41,13 @@ public class ItemController {
     }
 
     @GetMapping                                                                                 //Получить все вещи
-    public List<ItemDto> getItems(@RequestHeader(HEADER) long userId) {
-        return itemService.getItems(userId);
+    public List<ItemDto> getItems(@RequestHeader(HEADER) long userId,
+                                  @RequestParam(required = false) Long from,
+                                  @RequestParam(required = false) Long size) {
+        if (from == null || size == null) {
+            return itemService.getItems(userId);
+        }
+        return itemService.getItemsWithParam(userId, from, size);
     }
 
     @GetMapping("/search")                                                                          //Найти вещи

@@ -18,6 +18,7 @@ import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -160,6 +161,18 @@ public class ItemServiceImpl implements ItemService {
     public List<CommentDTO> findItemComments(long itemId) {
         List<Comment> comments = commentRepository.findByItemId(itemId);
         return comments.stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ItemDto> getItemsWithParam(long userId, Long from, Long size) {
+        if (from < 0 || size <= 0) {
+            log.error("Неверные параметры from {} или size {}", from, size);
+            throw new InvalidDataException("Неверные параметры");
+        }
+        return getItems(userId).stream()
+                .skip(from)
+                .limit(size)
+                .collect(Collectors.toList());
     }
 
     private boolean validateCommentAuthorAndDate(long userId, long itemId) {

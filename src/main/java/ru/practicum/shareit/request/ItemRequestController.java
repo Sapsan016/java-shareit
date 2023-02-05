@@ -29,14 +29,24 @@ public class ItemRequestController {
                                      @RequestHeader(HEADER) long userId) {
         return ItemRequestMapper.toItemRequestDto(requestService.addRequest(itemRequestAddDto, userId));
     }
+
     @GetMapping("/{requestId}")
     public ItemRequestDto getRequestById(@PathVariable long requestId,                               // получить запрос
-                                     @RequestHeader(HEADER) long userId) {
+                                         @RequestHeader(HEADER) long userId) {
         return requestService.getRequestById(requestId, userId);
     }
 
-    @GetMapping
-    public List<ItemRequestDto> getRequests(@RequestHeader(HEADER) long userId) {      //получить список своих запросов
+    @GetMapping("/all")                                          //получить список всех запросов других пользователей
+    public List<ItemRequestDto> getAllRequestsWithParam(@RequestParam(required = false) Long from,
+                                                        @RequestParam(required = false) Long size,
+                                                        @RequestHeader(HEADER) long userId) {
+        if (from == null || size == null) {
+            return requestService.getAllRequests(userId);
+        }
+        return requestService.getAllRequestsWithParam(userId, from, size);
+    }
+    @GetMapping                                                          //получить список всех запросов пользователя
+    public List<ItemRequestDto> getRequestsForUser(@RequestHeader(HEADER) long userId) {
         return requestService.getRequestsForUser(userId);
     }
 

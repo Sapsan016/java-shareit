@@ -40,10 +40,7 @@ public class UserControllerTestWithContext {
 
     final UserAddDto userAddDto = new UserAddDto( "John","john.doe@mail.com");
 
-
     final User user = new User(1L,"John","john.doe@mail.com");
-
-
 
     @Test
     void addNewUser() throws Exception {

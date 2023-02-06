@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.*;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserServiceImplTest {
 
-    UserServiceImpl userService;
+    UserService userService;
 
     UserAddDto userAddDto1 = new UserAddDto("testUser1", "user1@email.com");
 

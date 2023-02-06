@@ -134,4 +134,5 @@ public class ItemRequestServiceImplTest {
             assertThat(("Неверные параметры"), equalTo(e.getMessage()));
         }
     }
+
 }

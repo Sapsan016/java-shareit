@@ -39,9 +39,9 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking addBooking(BookingAddDto bookingAddDto, long userId) {               //Добавить бронирование
         User booker = userRepository.findById(userId).orElseThrow(() ->
-                new UserNotFoundException("Пользоватеь не найден"));
+                new UserNotFoundException(String.format("Пользователь с id %s не найден",userId)));
         Item item = itemRepository.findById(bookingAddDto.getItemId()).orElseThrow(() ->
-                new ItemRequestNotFoundException(String.format("Вещь с id %s не найдена", bookingAddDto.getItemId())));
+                new ItemNotFoundException(String.format("Вещь с id %s не найдена", bookingAddDto.getItemId())));
         Booking booking = BookingMapper.toBooking(bookingAddDto);
         validateBooking(booker.getId(), booking, item);
         booking.setBooker(booker);
@@ -91,7 +91,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking getBookingById(long bookingId, long userId) {                           // Получить все бронирования
+    public Booking getBookingById(long bookingId, long userId) {                           // Получить бронирование
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
                 new BookingNotFoundException(String.format("Бронирование с id %d не найдено.", bookingId)));
         if (userId == booking.getBooker().getId() ||

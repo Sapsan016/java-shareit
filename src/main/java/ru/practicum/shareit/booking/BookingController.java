@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingAddDto;
+import ru.practicum.shareit.exception.InvalidDataException;
 
 
 import java.util.List;
@@ -44,17 +45,39 @@ public class BookingController {
 
     @GetMapping()                                          //Получение списка всех бронирований текущего пользователя
     public List<BookingDto> getUserBooking(@RequestParam(defaultValue = "ALL") String state,
-                                           @RequestHeader(HEADER) long userId) {
+                                           @RequestHeader(HEADER) long userId,
+                                           @RequestParam(required = false) Long from,
+                                           @RequestParam(required = false) Long size) {
+        if (from == null || size == null) {
+            return bookingService.getUserBooking(state, userId).stream()
+                    .map(BookingMapper::toBookingDto)
+                    .collect(Collectors.toList());
+        }
+        if (from < 0 || size <= 0)
+            throw new InvalidDataException("Неверные параметры");
         return bookingService.getUserBooking(state, userId).stream()
                 .map(BookingMapper::toBookingDto)
+                .skip(from)
+                .limit(size)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/owner")        //Получение списка бронирований для всех вещей текущего пользователя
     public List<BookingDto> getUserItemBooking(@RequestParam(defaultValue = "ALL") String state,
-                                               @RequestHeader(HEADER) long userId) {
+                                               @RequestHeader(HEADER) long userId,
+                                               @RequestParam(required = false) Long from,
+                                               @RequestParam(required = false) Long size) {
+        if (from == null || size == null) {
+            return bookingService.getUserItemBooking(state, userId).stream()
+                    .map(BookingMapper::toBookingDto)
+                    .collect(Collectors.toList());
+        }
+        if (from < 0 || size <= 0)
+            throw new InvalidDataException("Неверные параметры");
         return bookingService.getUserItemBooking(state, userId).stream()
                 .map(BookingMapper::toBookingDto)
+                .skip(from)
+                .limit(size)
                 .collect(Collectors.toList());
     }
 }

@@ -16,7 +16,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse itemNotFoundExceptionResponse(final ItemRequestNotFoundException e) {
+    public ErrorResponse itemNotFoundExceptionResponse(final ItemNotFoundException e) {
         return new ErrorResponse(e.getMessage()
         );
     }
@@ -24,6 +24,13 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse bookingNotFoundExceptionResponse(final BookingNotFoundException e) {
+        return new ErrorResponse(e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse itemRequestNotFoundExceptionResponse(final ItemRequestNotFoundException e) {
         return new ErrorResponse(e.getMessage()
         );
     }

@@ -292,8 +292,4 @@ class BookingServiceImplTest {
             assertThat(("Unknown state: UNSUPPORTED_STATUS"), equalTo(e.getMessage()));
         }
     }
-
-
 }
-
-

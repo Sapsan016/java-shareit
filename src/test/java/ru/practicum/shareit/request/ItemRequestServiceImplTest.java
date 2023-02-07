@@ -3,6 +3,8 @@ package ru.practicum.shareit.request;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +25,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 @Transactional
 @SpringBootTest(
@@ -31,40 +34,42 @@ import static org.hamcrest.Matchers.equalTo;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ItemRequestServiceImplTest {
-    long ID = 1L;
 
     ItemRequestService itemRequestService;
-
     ItemService itemService;
-
     UserService userService;
-
     ItemRequestAddDto itemRequestAddDto1 = new ItemRequestAddDto("Test description 1",
             null, null);
-
     ItemRequestAddDto itemRequestAddDto2 = new ItemRequestAddDto("Test description 2",
             null, null);
-    User user = new User(ID, "testUser1", "user1@email.com");
-
     UserAddDto userAddDto1 = new UserAddDto("testUser1", "user1@email.com");
     UserAddDto userAddDto2 = new UserAddDto("testUser2", "user2@email.com");
+    @NonFinal
+    User savedUser;
+    @NonFinal
+    ItemRequest savedRequest;
+    @NonFinal
+    ItemAddDto item;
+    @NonFinal
+    Item savedItem;
 
+    @BeforeEach
+    void setUp() {
+        savedUser = userService.addUser(userAddDto1);
+        savedRequest = itemRequestService.addRequest(itemRequestAddDto1, savedUser.getId());
+        item = new ItemAddDto("Item1", "item1 description", true, savedRequest.getId());
+        savedItem = itemService.addItem(item, savedUser.getId());
+    }
 
     @Test
     void addRequest() {
-        User savedUser = userService.addUser(userAddDto1);
-        ItemRequest savedRequest = itemRequestService.addRequest(itemRequestAddDto1, savedUser.getId());
-        assertThat(savedRequest.getId(), equalTo(ID));
+        assertThat(savedRequest.getId(), notNullValue());
         assertThat(savedRequest.getRequester(), equalTo(savedUser));
         assertThat(savedRequest.getDescription(), equalTo(itemRequestAddDto1.getDescription()));
     }
 
     @Test
     void getRequestById() {
-        User savedUser = userService.addUser(userAddDto1);
-        ItemRequest savedRequest = itemRequestService.addRequest(itemRequestAddDto1, savedUser.getId());
-        ItemAddDto item = new ItemAddDto("Item1", "item1 description", true, savedRequest.getId());
-        itemService.addItem(item, savedUser.getId());
         ItemRequestDto requestDto = itemRequestService.getRequestById(savedRequest.getId(), savedUser.getId());
         assertThat(requestDto.getId(), equalTo(savedRequest.getId()));
         assertThat(requestDto.getRequester(), equalTo(savedRequest.getRequester()));
@@ -74,10 +79,6 @@ public class ItemRequestServiceImplTest {
 
     @Test
     void getRequestForUser() {
-        User savedUser = userService.addUser(userAddDto1);
-        ItemRequest savedRequest = itemRequestService.addRequest(itemRequestAddDto1, savedUser.getId());
-        ItemAddDto item = new ItemAddDto("Item1", "item1 description", true, savedRequest.getId());
-        Item savedItem = itemService.addItem(item, savedUser.getId());
         List<ItemRequestDto> requestDtoList = itemRequestService.getRequestsForUser(savedUser.getId());
         assertThat(requestDtoList.size(), equalTo(1));
         assertThat(requestDtoList.get(0).getRequester(), equalTo(savedRequest.getRequester()));
@@ -86,11 +87,7 @@ public class ItemRequestServiceImplTest {
 
     @Test
     void getAllRequestsWithParam() {
-        User savedUser = userService.addUser(userAddDto1);
         User savedUser2 = userService.addUser(userAddDto2);
-        ItemRequest savedRequest = itemRequestService.addRequest(itemRequestAddDto1, savedUser.getId());
-        ItemAddDto item = new ItemAddDto("Item1", "item1 description", true, savedRequest.getId());
-        Item savedItem = itemService.addItem(item, savedUser.getId());
         ItemAddDto item2 = new ItemAddDto("Item2", "item2 description", true, savedRequest.getId());
         itemService.addItem(item2, savedUser.getId());
         List<ItemRequestDto> requestDtoList = itemRequestService.getAllRequestsWithParam(savedUser2.getId(),
@@ -101,12 +98,8 @@ public class ItemRequestServiceImplTest {
 
     @Test
     void getAllRequests() {
-        User savedUser = userService.addUser(userAddDto1);
         User savedUser2 = userService.addUser(userAddDto2);
-        ItemRequest savedRequest = itemRequestService.addRequest(itemRequestAddDto1, savedUser.getId());
         ItemRequest savedRequest2 = itemRequestService.addRequest(itemRequestAddDto2, savedUser.getId());
-        ItemAddDto item = new ItemAddDto("Item1", "item1 description", true, savedRequest.getId());
-        Item savedItem = itemService.addItem(item, savedUser.getId());
         ItemAddDto item2 = new ItemAddDto("Item2", "item2 description", true, savedRequest2.getId());
         Item savedItem2 = itemService.addItem(item2, savedUser.getId());
         List<ItemRequestDto> requestDtoList = itemRequestService.getAllRequests(savedUser2.getId());
@@ -117,7 +110,6 @@ public class ItemRequestServiceImplTest {
 
     @Test
     void failedGetRequest() {
-        User savedUser = userService.addUser(userAddDto1);
         try {
             itemRequestService.getRequestById(99L, savedUser.getId());
         } catch (ItemRequestNotFoundException e) {
@@ -127,12 +119,10 @@ public class ItemRequestServiceImplTest {
 
     @Test
     void failedGetAllRequestsWithParam() {
-        User savedUser = userService.addUser(userAddDto1);
         try {
             itemRequestService.getAllRequestsWithParam(savedUser.getId(), -1, 0);
         } catch (InvalidDataException e) {
             assertThat(("Неверные параметры"), equalTo(e.getMessage()));
         }
     }
-
 }

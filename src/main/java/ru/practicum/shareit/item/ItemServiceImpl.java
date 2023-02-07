@@ -18,7 +18,6 @@ import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -91,7 +90,7 @@ public class ItemServiceImpl implements ItemService {
     public Item updateItem(long itemId, long userId, ItemAddDto itemAddDto) {
 
         Item itemToUpdate = itemRepository.findById(itemId).orElseThrow(() ->
-                new ItemRequestNotFoundException(String.format("Вещь с id %s не найдено", itemId)));
+                new ItemNotFoundException(String.format("Вещь с id %s не найдена", itemId)));
         if (itemToUpdate.getOwnerId() != userId) {
             log.error("Неверный Id владельца");
             throw new UserNotFoundException("Владелец не найден");
@@ -110,7 +109,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getItemById(long itemId, long userId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
-                new ItemRequestNotFoundException(String.format("Вещь с id %s не найдена", itemId)));
+                new ItemNotFoundException(String.format("Вещь с id %s не найдена", itemId)));
         ItemDto itemDto = ItemMapper.toItemDto(item);
         itemDto.setComments(findItemComments(itemId));
         if (item.getOwnerId() != userId) {
@@ -143,13 +142,11 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Comment addComment(CommentAddDto commentAddDto, long userId, long itemId) {
         Comment comment = CommentMapper.toComment(commentAddDto);
-        System.out.println(comment);
         if (validateCommentAuthorAndDate(userId, itemId)) {
             comment.setItemId(itemId);
             comment.setAuthor(userRepository.findById(userId).orElseThrow(()
                     -> new UserNotFoundException("Владелец не найден")));
             comment.setCreated(LocalDateTime.now());
-            System.out.println(comment);
             log.info("Добавлен новый отзыв к вещи с Id = {}", itemId);
             return commentRepository.save(comment);
         }
@@ -176,11 +173,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private boolean validateCommentAuthorAndDate(long userId, long itemId) {
-        Booking booking = bookingRepository.findById(itemId).orElseThrow(() ->
-                new BookingNotFoundException(String.format("Бронирование с id %s не найдено", itemId)));
-        if (userId != booking.getBooker().getId() || (!booking.getStatus().equals(BookingStatus.APPROVED))) {
+        List<Booking> bookings = bookingRepository.findByItemIdAndEndIsBeforeOrderByEndDesc(itemId, LocalDateTime.now());
+        if (bookings.isEmpty()) {
             return false;
         }
-        return !booking.getEnd().isBefore(LocalDateTime.now());
+        for (Booking booking : bookings) {
+            System.out.println(booking);
+            return userId == booking.getBooker().getId() & (booking.getStatus().equals(BookingStatus.APPROVED));
+        }
+        return true;
     }
 }

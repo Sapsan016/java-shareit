@@ -77,7 +77,6 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")                                                        //Добавить отзыв о вещи
     public CommentDTO addComment(@Valid @RequestBody CommentAddDto commentAddDto, @RequestHeader(HEADER) long userId,
                                  @PathVariable long itemId) {
-        System.out.println(commentAddDto.toString());
         return CommentMapper.toCommentDto(itemService.addComment(commentAddDto, userId, itemId));
     }
 }

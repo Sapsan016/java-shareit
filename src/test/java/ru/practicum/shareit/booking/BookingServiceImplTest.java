@@ -42,8 +42,6 @@ class BookingServiceImplTest {
     UserAddDto userAddDto2 = new UserAddDto("testUser2", "user2@yandex.ru");
     ItemAddDto itemAddDto = new ItemAddDto("Item1", "test item1", true, null);
     ItemAddDto itemAddDto2 = new ItemAddDto("Item2", "test item2", true, null);
-
-
     @NonFinal
     LocalDateTime start = LocalDateTime.now().plusMinutes(1);
     @NonFinal

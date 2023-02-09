@@ -95,8 +95,7 @@ class ItemServiceImplTest {
     void getItemByIdWithComment() throws InterruptedException {
         bookingService.approveBooking(shortBooking.getId(), owner.getId(), true);
         Thread.sleep(2000);
-        CommentAddDto commentAddDto = new CommentAddDto(0L, "Test comment", 0, 0,
-                null);
+        CommentAddDto commentAddDto = new CommentAddDto("Test comment", 0, 0, null);
 
         Comment comment = itemService.addComment(commentAddDto, booker.getId(), savedItem.getId());
         ItemDto returnedItem = itemService.getItemById(savedItem.getId(), owner.getId());
@@ -139,6 +138,13 @@ class ItemServiceImplTest {
         assertThat(items.size(), equalTo(2));
         assertThat(items.get(1), equalTo(savedItem2));
     }
+    @Test
+    void searchItemsWithParams() {
+        List<Item> items = itemService.searchItemsWithParams("IteM", 1L,1L);
+        assertThat(items.size(), equalTo(1));
+        assertThat(items.get(0), equalTo(savedItem2));
+    }
+
 
     @Test
     void failedGetItemsWrongUser() {
@@ -152,19 +158,21 @@ class ItemServiceImplTest {
     @Test
     void failedUpdateItemWrongItem() {
         try {
-            itemService.updateItem(99L, owner.getId(),itemAddDto1);
+            itemService.updateItem(99L, owner.getId(), itemAddDto1);
         } catch (ItemNotFoundException e) {
-            assertThat("Вещь с id " + 99L +" не найдена", equalTo(e.getMessage()));
+            assertThat("Вещь с id " + 99L + " не найдена", equalTo(e.getMessage()));
         }
     }
+
     @Test
     void failedUpdateItemWrongUser() {
         try {
-            itemService.updateItem(savedItem.getId(), 99L ,itemAddDto1);
+            itemService.updateItem(savedItem.getId(), 99L, itemAddDto1);
         } catch (UserNotFoundException e) {
             assertThat("Владелец не найден", equalTo(e.getMessage()));
         }
     }
+
     @Test
     void failedAddItemEmptyAvailable() {
         try {
@@ -173,40 +181,52 @@ class ItemServiceImplTest {
             assertThat("Поле available не может быть пустым", equalTo(e.getMessage()));
         }
     }
+
     @Test
     void failedAddItemWrongUser() {
         try {
-            itemService.addItem(itemAddDto1, 99L );
+            itemService.addItem(itemAddDto1, 99L);
         } catch (UserNotFoundException e) {
             assertThat("Пользователь не найден", equalTo(e.getMessage()));
         }
     }
+
     @Test
     void returnItemWithoutBookingForWrongOwner() {
-        ItemDto itemDto = itemService.getItemById(savedItem.getId(),booker.getId());
+        ItemDto itemDto = itemService.getItemById(savedItem.getId(), booker.getId());
         assertThat(itemDto.getNextBooking(), nullValue());
     }
+
     @Test
     void returnItemWithoutBooking() {
-        ItemDto itemDto = itemService.getItemById(savedItem2.getId(),owner.getId());
+        ItemDto itemDto = itemService.getItemById(savedItem2.getId(), owner.getId());
         assertThat(itemDto.getNextBooking(), nullValue());
     }
+
     @Test
     void failedAddCommentWrongBooking() {
         try {
-            itemService.addComment(new CommentAddDto(0L, "Test comment", 0, 0,
+            itemService.addComment(new CommentAddDto("Test comment", 0, 0,
                     null), booker.getId(), 99L);
         } catch (UnavailiableException e) {
             assertThat("Невозможно добавить отзыв. Проверьте данные бронирования", equalTo(e.getMessage()));
         }
     }
+
     @Test
     void failedGetItemsWrongParams() {
         try {
-            itemService.getItemsWithParam(owner.getId(),-1L, 0L);
+            itemService.getItemsWithParam(owner.getId(), -1L, 0L);
         } catch (InvalidDataException e) {
             assertThat("Неверные параметры", equalTo(e.getMessage()));
         }
     }
-
+    @Test
+    void failedSearchWrongParams() {
+        try {
+            itemService.searchItemsWithParams("item", -1L, 0L);
+        } catch (InvalidDataException e) {
+            assertThat("Неверные параметры", equalTo(e.getMessage()));
+        }
+    }
 }

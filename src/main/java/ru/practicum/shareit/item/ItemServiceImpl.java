@@ -140,6 +140,16 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    public List<Item> searchItemsWithParams(String text, Long from, Long size) {
+        if (from < 0 || size <= 0)
+            throw new InvalidDataException("Неверные параметры");
+        return searchItems(text).stream()
+                .skip(from)
+                .limit(size)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Comment addComment(CommentAddDto commentAddDto, long userId, long itemId) {
         Comment comment = CommentMapper.toComment(commentAddDto);
         if (validateCommentAuthorAndDate(userId, itemId)) {

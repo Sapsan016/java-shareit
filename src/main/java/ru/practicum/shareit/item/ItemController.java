@@ -3,7 +3,6 @@ package ru.practicum.shareit.item;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.InvalidDataException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -48,12 +47,7 @@ public class ItemController {
         if (from == null || size == null) {
             return itemService.getItems(userId);
         }
-        if (from < 0 || size <= 0)
-            throw new InvalidDataException("Неверные параметры");
-        return itemService.getItems(userId).stream()
-                .skip(from)
-                .limit(size)
-                .collect(Collectors.toList());
+        return itemService.getItemsWithParam(userId, from, size);
     }
 
     @GetMapping("/search")                                                                          //Найти вещи
@@ -65,12 +59,8 @@ public class ItemController {
                     .map(ItemMapper::toItemDto)
                     .collect(Collectors.toList());
         }
-        if (from < 0 || size <= 0)
-            throw new InvalidDataException("Неверные параметры");
-        return itemService.searchItems(text).stream()
+        return itemService.searchItemsWithParams(text, from, size).stream()
                 .map(ItemMapper::toItemDto)
-                .skip(from)
-                .limit(size)
                 .collect(Collectors.toList());
     }
 

@@ -1,29 +1,20 @@
 package ru.practicum.shareit.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.xml.bind.v2.TODO;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.experimental.NonFinal;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import ru.practicum.shareit.user.UserController;
-import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.user.UserServiceImpl;
 import ru.practicum.shareit.user.dto.UserAddDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,31 +22,33 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = UserController.class)
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserControllerTest {
 
     @Autowired
+    @NonFinal
     ObjectMapper mapper;
     @MockBean
+    @NonFinal
     UserServiceImpl userService;
     @Autowired
+    @NonFinal
     MockMvc mvc;
 
-    final UserAddDto userAddDto = new UserAddDto("John", "john.doe@mail.com");
+    UserAddDto userAddDto = new UserAddDto("John", "john.doe@mail.com");
 
-    final UserAddDto userUpdateAddDto = new UserAddDto("Ivan", "ivan.ivanov@mail.com");
+    UserAddDto userUpdateAddDto = new UserAddDto("Ivan", "ivan.ivanov@mail.com");
 
-    final User user = new User(1L, "John", "john.doe@mail.com");
+    User user = new User(1L, "John", "john.doe@mail.com");
 
-    final User user2 = new User(2L, "Mike", "mike.gor@mail.com");
+    User user2 = new User(2L, "Mike", "mike.gor@mail.com");
 
-    final User updatedUser = new User(1L, "Ivan", "ivan.ivanov@mail.com");
+    User updatedUser = new User(1L, "Ivan", "ivan.ivanov@mail.com");
 
 
     @Test
@@ -109,14 +102,11 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.email", is(updatedUser.getEmail())));
     }
 
-
     @Test
     void userNotFound() throws Exception {
         when(userService.getUserById(anyLong()))
                 .thenReturn(Optional.empty());
         mvc.perform(get("/users/1"))
                 .andExpect(status().isNotFound());
-
-
     }
 }

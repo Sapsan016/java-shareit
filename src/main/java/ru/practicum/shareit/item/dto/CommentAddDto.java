@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CommentAddDto {
-    long id;
     @NotBlank
     String text;
     long itemId;

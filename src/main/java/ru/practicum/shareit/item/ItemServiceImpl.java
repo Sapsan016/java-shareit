@@ -75,7 +75,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = ItemMapper.toItem(itemAddDto);
         if (item.getAvailable() == null) {
             log.error("Не заполнено поле available");
-            throw new UnavailiableException("Поле available не может быть пустым");
+            throw new UnavailableException("Поле available не может быть пустым");
         }
         if (userRepository.findById(userId).isEmpty()) {
             log.error("Пользователь с Id = {} не найден", userId);
@@ -161,7 +161,7 @@ public class ItemServiceImpl implements ItemService {
             return commentRepository.save(comment);
         }
         log.error("Неверные данные бронирования");
-        throw new UnavailiableException("Невозможно добавить отзыв. Проверьте данные бронирования");
+        throw new UnavailableException("Невозможно добавить отзыв. Проверьте данные бронирования");
     }
 
     @Override

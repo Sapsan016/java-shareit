@@ -1,7 +1,7 @@
 package ru.practicum.shareit.exception;
 
-public class UnavailiableException extends RuntimeException {
-    public UnavailiableException(String s) {
+public class UnavailableException extends RuntimeException {
+    public UnavailableException(String s) {
         super(s);
     }
 }

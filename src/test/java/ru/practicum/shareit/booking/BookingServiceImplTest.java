@@ -237,7 +237,7 @@ class BookingServiceImplTest {
         savedItem.setAvailable(false);
         try {
             bookingService.addBooking(new BookingAddDto(savedItem.getId(), start, end), booker.getId());
-        } catch (UnavailiableException e) {
+        } catch (UnavailableException e) {
             assertThat(("Вещь с id " + savedItem.getId() + " не доступна для бронирования."),
                     equalTo(e.getMessage()));
         }
@@ -267,7 +267,7 @@ class BookingServiceImplTest {
         bookingService.approveBooking(savedBooking.getId(), owner.getId(), true);
         try {
             bookingService.approveBooking(savedBooking.getId(), owner.getId(), true);
-        } catch (UnavailiableException e) {
+        } catch (UnavailableException e) {
             assertThat(("Бронирование уже подтверждено"), equalTo(e.getMessage()));
         }
     }
@@ -286,7 +286,7 @@ class BookingServiceImplTest {
     void unsupportedParameter() {
         try {
             bookingService.getUserBooking("WTF", booker.getId());
-        } catch (UnavailiableException e) {
+        } catch (UnavailableException e) {
             assertThat(("Unknown state: UNSUPPORTED_STATUS"), equalTo(e.getMessage()));
         }
     }

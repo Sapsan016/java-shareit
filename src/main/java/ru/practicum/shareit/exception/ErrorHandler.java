@@ -37,7 +37,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse unavailableExceptionResponse(final UnavailiableException e) {
+    public ErrorResponse unavailableExceptionResponse(final UnavailableException e) {
         return new ErrorResponse(e.getMessage()
         );
     }
@@ -49,10 +49,4 @@ public class ErrorHandler {
         );
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse invalidUserExceptionResponse(final InvalidUserException e) {
-        return new ErrorResponse(e.getMessage()
-        );
-    }
 }

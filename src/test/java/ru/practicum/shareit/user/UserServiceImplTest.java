@@ -34,6 +34,7 @@ public class UserServiceImplTest {
     UserAddDto updatedUser = new UserAddDto("UpdatedUser", "update@yandex.ru");
     @NonFinal
     User savedUser;
+
     @BeforeEach
     void setUp() {
         savedUser = userService.addUser(userAddDto1);

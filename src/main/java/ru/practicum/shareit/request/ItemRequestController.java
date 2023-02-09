@@ -49,5 +49,4 @@ public class ItemRequestController {
     public List<ItemRequestDto> getRequestsForUser(@RequestHeader(HEADER) long userId) {
         return requestService.getRequestsForUser(userId);
     }
-
 }

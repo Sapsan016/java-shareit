@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class ItemMapper {
     public static Item toItem(ItemAddDto itemAddDto) {
         return new Item(
-                0,
+                null,
                 itemAddDto.getName(),
                 itemAddDto.getDescription(),
                 itemAddDto.getAvailable(),

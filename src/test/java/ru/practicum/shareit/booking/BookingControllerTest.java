@@ -48,7 +48,7 @@ class BookingControllerTest {
     BookingAddDto bookingAddDto = new BookingAddDto(ID, START, END);
     Booking booking = new Booking(ID, START, END, item1, booker, BookingStatus.WAITING);
 
-    Booking booking2 = new Booking(ID, START, END, item1, booker, BookingStatus.WAITING);
+    Booking booking2 = new Booking(2L, START, END, item1, booker, BookingStatus.WAITING);
 
 
     @Test
@@ -163,4 +163,5 @@ class BookingControllerTest {
                 .andExpect(result -> Assertions.assertTrue(result.getResolvedException()
                         instanceof InvalidDataException));
     }
+
 }

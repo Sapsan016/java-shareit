@@ -4,20 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.annotation.RequestMapping;
-import ru.practicum.shareit.booking.BookingController;
-import ru.practicum.shareit.booking.BookingServiceImpl;
-import ru.practicum.shareit.booking.dto.BookingAddDto;
-import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.exception.InvalidDataException;
-import ru.practicum.shareit.item.model.Item;
+
 import ru.practicum.shareit.request.dto.ItemRequestAddDto;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -47,7 +40,7 @@ class ItemRequestControllerTest {
     MockMvc mvc;
     static String HEADER = "X-Sharer-User-Id";
     static long ID = 1L;
-    LocalDateTime CREATED = LocalDateTime.now();
+    static LocalDateTime CREATED = LocalDateTime.now();
     User requester = new User(ID, "John", "john.doe@mail.com");
     ItemRequestAddDto requestAddDto = new ItemRequestAddDto("Request description", requester, CREATED);
     ItemRequest request = new ItemRequest(ID, "Request description", requester, CREATED);
@@ -106,6 +99,7 @@ class ItemRequestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedResponse));
     }
+
     @Test
     void getUserRequest() throws Exception {
         when(requestService.getRequestsForUser(ID))

@@ -277,8 +277,8 @@ class BookingServiceImplTest {
         try {
             bookingService.approveBooking(savedBooking.getId(), booker.getId(), true);
         } catch (UserNotFoundException e) {
-            assertThat(("Пользователь с id " + booker.getId() + " не является владельцем вещи.")
-                    , equalTo(e.getMessage()));
+            assertThat(("Пользователь с id " + booker.getId() + " не является владельцем вещи."),
+                    equalTo(e.getMessage()));
         }
     }
 

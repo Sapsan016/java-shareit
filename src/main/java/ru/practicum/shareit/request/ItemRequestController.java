@@ -45,6 +45,7 @@ public class ItemRequestController {
         }
         return requestService.getAllRequestsWithParam(userId, from, size);
     }
+
     @GetMapping                                                          //получить список всех запросов пользователя
     public List<ItemRequestDto> getRequestsForUser(@RequestHeader(HEADER) long userId) {
         return requestService.getRequestsForUser(userId);

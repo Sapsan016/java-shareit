@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.practicum.shareit.item.dto.CommentAddDto;
 import ru.practicum.shareit.item.dto.ItemAddDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -23,11 +24,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = ItemController.class)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -66,6 +65,7 @@ public class ItemControllerTest {
     void addNewItem() throws Exception {
         when(itemService.addItem(itemAddDto1, ID))
                 .thenReturn(item1);
+        String expectedResponse = mapper.writeValueAsString(ItemMapper.toItemDto(item1));
         mvc.perform(post("/items")
                         .content(mapper.writeValueAsString(itemAddDto1))
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -73,18 +73,14 @@ public class ItemControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .header(HEADER, ID))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(item1.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(item1.getName())))
-                .andExpect(jsonPath("$.description", is(item1.getDescription())))
-                .andExpect(jsonPath("$.available", is(item1.getAvailable())))
-                .andExpect(jsonPath("$.owner", is(item1.getOwnerId()), Long.class))
-                .andExpect(jsonPath("$.requestId", is(item1.getRequestId())));
+                .andExpect(content().json(expectedResponse));
     }
 
     @Test
     void addNewComment() throws Exception {
         when(itemService.addComment(commentAddDto, ID, ID))
                 .thenReturn(comment);
+        String expectedResponse = mapper.writeValueAsString(CommentMapper.toCommentDto(comment));
         mvc.perform(post("/items/1/comment")
                         .content(mapper.writeValueAsString(commentAddDto))
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -92,10 +88,7 @@ public class ItemControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .header(HEADER, ID))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(comment.getId()), Long.class))
-                .andExpect(jsonPath("$.itemId", is(comment.getItemId()), Long.class))
-                .andExpect(jsonPath("$.authorId", is(comment.getAuthor().getId()), Long.class))
-                .andExpect(jsonPath("$.authorName", is(comment.getAuthor().getName())));
+                .andExpect(content().json(expectedResponse));
     }
 
     @Test
@@ -124,34 +117,27 @@ public class ItemControllerTest {
     void getItemById() throws Exception {
         when(itemService.getItemById(ID, ID))
                 .thenReturn(itemDto1);
+        String expectedResponse = mapper.writeValueAsString(itemDto1);
         mvc.perform(get("/items/1")
                         .header(HEADER, ID))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(itemDto1.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(itemDto1.getName())))
-                .andExpect(jsonPath("$.description", is(itemDto1.getDescription())))
-                .andExpect(jsonPath("$.available", is(itemDto1.getAvailable())))
-                .andExpect(jsonPath("$.owner", is(itemDto1.getOwner()), Long.class))
-                .andExpect(jsonPath("$.requestId", is(itemDto1.getRequestId())))
-                .andExpect(jsonPath("$.lastBooking", is(itemDto1.getLastBooking())))
-                .andExpect(jsonPath("$.nextBooking", is(itemDto1.getNextBooking())))
-                .andExpect(jsonPath("$.comments", is(itemDto1.getComments())));
+                .andExpect(content().json(expectedResponse));
     }
 
     @Test
     void updateItem() throws Exception {
         when(itemService.updateItem(ID, ID, itemAddDto1update))
                 .thenReturn(item1updated);
+        String expectedResponse = mapper.writeValueAsString(ItemMapper.toItemDto(item1updated));
+
         mvc.perform(patch("/items/1")
                         .content(mapper.writeValueAsString(itemAddDto1update))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header(HEADER, ID))
-                .andExpect(jsonPath("$.description", is(item1updated.getDescription())))
-                .andExpect(jsonPath("$.available", is(item1updated.getAvailable())))
-                .andExpect(jsonPath("$.owner", is(item1updated.getOwnerId()), Long.class))
-                .andExpect(jsonPath("$.requestId", is(item1updated.getRequestId())));
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedResponse));
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -11,16 +12,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.dto.BookingAddDto;
-import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.exception.InvalidDataException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -48,8 +48,7 @@ class BookingControllerTest {
     BookingAddDto bookingAddDto = new BookingAddDto(ID, START, END);
     Booking booking = new Booking(ID, START, END, item1, booker, BookingStatus.WAITING);
 
-    Booking approvedBooking = new Booking(ID, START, END, item1, booker, BookingStatus.APPROVED);
-    BookingDto bookingDto = BookingMapper.toBookingDto(booking);
+    Booking booking2 = new Booking(ID, START, END, item1, booker, BookingStatus.WAITING);
 
 
     @Test
@@ -79,5 +78,89 @@ class BookingControllerTest {
                         .header(HEADER, ID))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedResponse));
+    }
+
+    @Test
+    void getBooking() throws Exception {
+        when(bookingService.getBookingById(ID, ID))
+                .thenReturn(booking);
+        String expectedResponse = mapper.writeValueAsString(booking);
+        mvc.perform(get("/bookings/1")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header(HEADER, ID))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedResponse));
+    }
+
+    @Test
+    void getUserBookingWithoutParams() throws Exception {
+        when(bookingService.getUserBooking("ALL", ID))
+                .thenReturn(List.of(booking, booking2));
+        String expectedResponse = mapper.writeValueAsString(List.of(booking, booking2));
+        mvc.perform(get("/bookings?state=ALL")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header(HEADER, ID))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedResponse));
+    }
+
+    @Test
+    void getUserBookingWithParams() throws Exception {
+        when(bookingService.getUserBooking("ALL", ID))
+                .thenReturn(List.of(booking, booking2));
+        String expectedResponse = mapper.writeValueAsString(List.of(booking2));
+        mvc.perform(get("/bookings?state=ALL&from=1&size=1")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header(HEADER, ID))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedResponse));
+    }
+
+    @Test
+    void getUserBookingWithWrongParams() throws Exception {
+        when(bookingService.getUserBooking("ALL", ID))
+                .thenReturn(List.of(booking, booking2));
+        mvc.perform(get("/bookings?state=ALL&from=0&size=0")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header(HEADER, ID))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> Assertions.assertTrue(result.getResolvedException()
+                        instanceof InvalidDataException));
+    }
+
+    @Test
+    void getOwnerBookingWithoutParams() throws Exception {
+        when(bookingService.getUserItemBooking("ALL", ID))
+                .thenReturn(List.of(booking, booking2));
+        String expectedResponse = mapper.writeValueAsString(List.of(booking, booking2));
+        mvc.perform(get("/bookings/owner?state=ALL")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header(HEADER, ID))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedResponse));
+    }
+
+    @Test
+    void getOwnerBookingWithParams() throws Exception {
+        when(bookingService.getUserItemBooking("ALL", ID))
+                .thenReturn(List.of(booking, booking2));
+        String expectedResponse = mapper.writeValueAsString(List.of(booking2));
+        mvc.perform(get("/bookings/owner?state=ALL&from=1&size=1")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header(HEADER, ID))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedResponse));
+    }
+
+    @Test
+    void getOwnerBookingWithWrongParams() throws Exception {
+        when(bookingService.getUserBooking("ALL", ID))
+                .thenReturn(List.of(booking, booking2));
+        mvc.perform(get("/bookings/owner?state=ALL&from=0&size=0")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header(HEADER, ID))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> Assertions.assertTrue(result.getResolvedException()
+                        instanceof InvalidDataException));
     }
 }

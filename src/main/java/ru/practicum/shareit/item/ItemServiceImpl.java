@@ -188,8 +188,7 @@ public class ItemServiceImpl implements ItemService {
             return false;
         }
         for (Booking booking : bookings) {
-            System.out.println(booking);
-            return userId == booking.getBooker().getId() & (booking.getStatus().equals(BookingStatus.APPROVED));
+           return userId == booking.getBooker().getId() && (booking.getStatus().equals(BookingStatus.APPROVED));
         }
         return true;
     }

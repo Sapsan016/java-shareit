@@ -79,7 +79,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         findRequester(userId);
         log.info("Выполняется поиск всех запросов с начиная с номера {} количество запросов {}", from, size);
         List<ItemRequest> requestList = findAll();
-        if(isRequester(requestList, userId)) {
+        if (isRequester(requestList, userId)) {
             return new ArrayList<>();
         }
         return requestList.stream()
@@ -95,9 +95,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public List<ItemRequestDto> getAllRequests(long userId) {
         findRequester(userId);
         List<ItemRequest> requestList = findAll();
-        if(isRequester(requestList, userId)) {
-                return new ArrayList<>();
-            }
+        if (isRequester(requestList, userId)) {
+            return new ArrayList<>();
+        }
         return requestList.stream()
                 .sorted(Comparator.comparing(ItemRequest::getCreated).reversed())
                 .map(ItemRequestMapper::toItemRequestDto)

@@ -138,13 +138,13 @@ class ItemServiceImplTest {
         assertThat(items.size(), equalTo(2));
         assertThat(items.get(1), equalTo(savedItem2));
     }
+
     @Test
     void searchItemsWithParams() {
-        List<Item> items = itemService.searchItemsWithParams("IteM", 1L,1L);
+        List<Item> items = itemService.searchItemsWithParams("IteM", 1L, 1L);
         assertThat(items.size(), equalTo(1));
         assertThat(items.get(0), equalTo(savedItem2));
     }
-
 
     @Test
     void failedGetItemsWrongUser() {
@@ -221,6 +221,7 @@ class ItemServiceImplTest {
             assertThat("Неверные параметры", equalTo(e.getMessage()));
         }
     }
+
     @Test
     void failedSearchWrongParams() {
         try {

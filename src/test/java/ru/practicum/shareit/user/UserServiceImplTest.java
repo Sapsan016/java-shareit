@@ -69,7 +69,7 @@ public class UserServiceImplTest {
         try {
             userService.updateUser(99L, updatedUser);
         } catch (UserNotFoundException e) {
-            assertThat(("Пользователь с id " + 99 + " не найден"), equalTo(e.getMessage()));
+            assertThat((String.format("Пользователь с id %s не найден", 99L)), equalTo(e.getMessage()));
         }
     }
 
@@ -90,7 +90,7 @@ public class UserServiceImplTest {
         try {
             userService.getUserById(savedUser.getId());
         } catch (UserNotFoundException e) {
-            assertThat(("Пользователь с id " + savedUser.getId() + " не найден"), equalTo(e.getMessage()));
+            assertThat((String.format("Пользователь с id %s не найден", savedUser.getId())), equalTo(e.getMessage()));
         }
     }
 }

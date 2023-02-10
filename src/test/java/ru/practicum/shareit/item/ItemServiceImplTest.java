@@ -160,7 +160,7 @@ class ItemServiceImplTest {
         try {
             itemService.updateItem(99L, owner.getId(), itemAddDto1);
         } catch (ItemNotFoundException e) {
-            assertThat("Вещь с id " + 99L + " не найдена", equalTo(e.getMessage()));
+            assertThat((String.format("Вещь с id %s не найдена", 99L)), equalTo(e.getMessage()));
         }
     }
 

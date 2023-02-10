@@ -210,7 +210,7 @@ class BookingServiceImplTest {
         try {
             bookingService.addBooking(new BookingAddDto(savedItem.getId(), start, end), 99L);
         } catch (UserNotFoundException e) {
-            assertThat(("Пользователь с id " + 99 + " не найден"), equalTo(e.getMessage()));
+            assertThat((String.format("Пользователь с id %s не найден", 99L)), equalTo(e.getMessage()));
         }
     }
 
@@ -219,7 +219,7 @@ class BookingServiceImplTest {
         try {
             bookingService.addBooking(new BookingAddDto(99L, start, end), booker.getId());
         } catch (ItemNotFoundException e) {
-            assertThat(("Вещь с id " + 99 + " не найдена"), equalTo(e.getMessage()));
+            assertThat((String.format("Вещь с id %s не найдена", 99L)), equalTo(e.getMessage()));
         }
     }
 
@@ -238,7 +238,7 @@ class BookingServiceImplTest {
         try {
             bookingService.addBooking(new BookingAddDto(savedItem.getId(), start, end), booker.getId());
         } catch (UnavailableException e) {
-            assertThat(("Вещь с id " + savedItem.getId() + " не доступна для бронирования."),
+            assertThat((String.format("Вещь с id %s не доступна для бронирования.", savedItem.getId())),
                     equalTo(e.getMessage()));
         }
     }
@@ -258,7 +258,7 @@ class BookingServiceImplTest {
         try {
             bookingService.approveBooking(99L, owner.getId(), true);
         } catch (BookingNotFoundException e) {
-            assertThat(("Бронирование с id " + 99 + " не найдено"), equalTo(e.getMessage()));
+            assertThat((String.format("Бронирование с id %s не найдено", 99L)), equalTo(e.getMessage()));
         }
     }
 
@@ -277,7 +277,7 @@ class BookingServiceImplTest {
         try {
             bookingService.approveBooking(savedBooking.getId(), booker.getId(), true);
         } catch (UserNotFoundException e) {
-            assertThat(("Пользователь с id " + booker.getId() + " не является владельцем вещи."),
+            assertThat((String.format("Пользователь с id %s не является владельцем вещи.", booker.getId())),
                     equalTo(e.getMessage()));
         }
     }

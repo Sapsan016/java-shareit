@@ -113,7 +113,7 @@ public class ItemRequestServiceImplTest {
         try {
             itemRequestService.getRequestById(99L, savedUser.getId());
         } catch (ItemRequestNotFoundException e) {
-            assertThat(("Запрос с id " + 99 + " не найден"), equalTo(e.getMessage()));
+            assertThat((String.format("Запрос с id %s не найден", 99L)), equalTo(e.getMessage()));
         }
     }
 

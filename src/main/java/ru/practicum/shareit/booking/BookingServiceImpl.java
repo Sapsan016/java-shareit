@@ -39,7 +39,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking addBooking(BookingAddDto bookingAddDto, long userId) {               //Добавить бронирование
         User booker = userRepository.findById(userId).orElseThrow(() ->
-                new UserNotFoundException("Пользоватеь не найден"));
+                new UserNotFoundException(String.format("Пользователь с id %s не найден",userId)));
         Item item = itemRepository.findById(bookingAddDto.getItemId()).orElseThrow(() ->
                 new ItemNotFoundException(String.format("Вещь с id %s не найдена", bookingAddDto.getItemId())));
         Booking booking = BookingMapper.toBooking(bookingAddDto);
@@ -56,7 +56,7 @@ public class BookingServiceImpl implements BookingService {
         if (bookerId == item.getOwnerId()) {
             throw new UserNotFoundException("Владелец не может бронировать свои вещи.");
         } else if (!item.getAvailable()) {
-            throw new UnavailiableException(String.format("Вещь с id %d не доступна для бронирования.",
+            throw new UnavailableException(String.format("Вещь с id %d не доступна для бронирования.",
                     item.getId()));
         } else if (validateDate(booking.getStart(), booking.getEnd())) {
             throw new InvalidDataException("Неправильное время начала или конца бронирования.");
@@ -74,7 +74,7 @@ public class BookingServiceImpl implements BookingService {
                 new BookingNotFoundException(String.format("Бронирование с id %s не найдено", bookingId)));
         if (bookingToApprove.getStatus().equals(BookingStatus.APPROVED)) {
             log.error("Бронирование с id = {} уже подтверждено", bookingId);
-            throw new UnavailiableException("Бронирование уже подтверждено");
+            throw new UnavailableException("Бронирование уже подтверждено");
         }
         if (itemRepository.findById(bookingToApprove.getItem().getId()).orElseThrow().getOwnerId() != userId) {
             throw new UserNotFoundException(String.format("Пользователь с id %d не является владельцем вещи.",
@@ -91,7 +91,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking getBookingById(long bookingId, long userId) {                           // Получить все бронирования
+    public Booking getBookingById(long bookingId, long userId) {                           // Получить бронирование
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
                 new BookingNotFoundException(String.format("Бронирование с id %d не найдено.", bookingId)));
         if (userId == booking.getBooker().getId() ||
@@ -133,7 +133,7 @@ public class BookingServiceImpl implements BookingService {
 
         }
         log.error("Отсутствует метод для параметра = {}", state);
-        throw new UnavailiableException("Unknown state: UNSUPPORTED_STATUS");
+        throw new UnavailableException("Unknown state: UNSUPPORTED_STATUS");
     }
 
     @Override
@@ -144,7 +144,7 @@ public class BookingServiceImpl implements BookingService {
         }
         List<Long> itemList = itemRepository.findItemIdByOwnerId(userId);               //Список Id вещей пользователя
         if (itemList.isEmpty()) {
-            throw new UnavailiableException("Данный пользователь не имеет вещей");
+            throw new UnavailableException("Данный пользователь не имеет вещей");
         }
         List<Booking> bookingList = new ArrayList<>();
         switch (state) {
@@ -197,7 +197,7 @@ public class BookingServiceImpl implements BookingService {
 
         }
         log.error("Отсутствует метод для параметра = {}", state);
-        throw new UnavailiableException("Unknown state: UNSUPPORTED_STATUS");
+        throw new UnavailableException("Unknown state: UNSUPPORTED_STATUS");
     }
 
     private boolean isUserPresent(long userId) {

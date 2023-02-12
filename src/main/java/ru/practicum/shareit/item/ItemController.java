@@ -41,13 +41,25 @@ public class ItemController {
     }
 
     @GetMapping                                                                                 //Получить все вещи
-    public List<ItemDto> getItems(@RequestHeader(HEADER) long userId) {
-        return itemService.getItems(userId);
+    public List<ItemDto> getItems(@RequestHeader(HEADER) long userId,
+                                  @RequestParam(required = false) Long from,
+                                  @RequestParam(required = false) Long size) {
+        if (from == null || size == null) {
+            return itemService.getItems(userId);
+        }
+        return itemService.getItemsWithParam(userId, from, size);
     }
 
     @GetMapping("/search")                                                                          //Найти вещи
-    public List<ItemDto> searchItems(@RequestParam("text") String text) {
-        return itemService.searchItems(text).stream()
+    public List<ItemDto> searchItems(@RequestParam("text") String text,
+                                     @RequestParam(required = false) Long from,
+                                     @RequestParam(required = false) Long size) {
+        if (from == null || size == null) {
+            return itemService.searchItems(text).stream()
+                    .map(ItemMapper::toItemDto)
+                    .collect(Collectors.toList());
+        }
+        return itemService.searchItemsWithParams(text, from, size).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
@@ -55,7 +67,6 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")                                                        //Добавить отзыв о вещи
     public CommentDTO addComment(@Valid @RequestBody CommentAddDto commentAddDto, @RequestHeader(HEADER) long userId,
                                  @PathVariable long itemId) {
-        System.out.println(commentAddDto.toString());
         return CommentMapper.toCommentDto(itemService.addComment(commentAddDto, userId, itemId));
     }
 }

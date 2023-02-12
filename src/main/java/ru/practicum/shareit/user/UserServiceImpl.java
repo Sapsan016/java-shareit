@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     public User updateUser(long userId, UserAddDto userAddDto) {                               //Обновить пользователя
         User user = UserMapper.toUser(userAddDto);
         User userToUpdate = getUserById(userId).orElseThrow(() ->
-                new UserNotFoundException(String.format("Пользователь с id %s не найдена", userId)));
+                new UserNotFoundException(String.format("Пользователь с id %s не найден", userId)));
         if (checkEmail(user)) {
             log.error("Такие данные уже существуют");
             throw new ValidationException("Такие данные уже существуют");

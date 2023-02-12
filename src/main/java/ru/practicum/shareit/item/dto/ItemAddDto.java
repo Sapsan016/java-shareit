@@ -17,5 +17,5 @@ public class ItemAddDto {
     @NotBlank
     String description;
     Boolean available;
-    Long request;
+    Long requestId;
 }

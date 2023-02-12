@@ -75,7 +75,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = ItemMapper.toItem(itemAddDto);
         if (item.getAvailable() == null) {
             log.error("Не заполнено поле available");
-            throw new UnavailiableException("Поле available не может быть пустым");
+            throw new UnavailableException("Поле available не может быть пустым");
         }
         if (userRepository.findById(userId).isEmpty()) {
             log.error("Пользователь с Id = {} не найден", userId);
@@ -90,7 +90,7 @@ public class ItemServiceImpl implements ItemService {
     public Item updateItem(long itemId, long userId, ItemAddDto itemAddDto) {
 
         Item itemToUpdate = itemRepository.findById(itemId).orElseThrow(() ->
-                new ItemNotFoundException(String.format("Вещь с id %s не найдено", itemId)));
+                new ItemNotFoundException(String.format("Вещь с id %s не найдена", itemId)));
         if (itemToUpdate.getOwnerId() != userId) {
             log.error("Неверный Id владельца");
             throw new UserNotFoundException("Владелец не найден");
@@ -140,20 +140,28 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    public List<Item> searchItemsWithParams(String text, Long from, Long size) {
+        if (from < 0 || size <= 0)
+            throw new InvalidDataException("Неверные параметры");
+        return searchItems(text).stream()
+                .skip(from)
+                .limit(size)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Comment addComment(CommentAddDto commentAddDto, long userId, long itemId) {
         Comment comment = CommentMapper.toComment(commentAddDto);
-        System.out.println(comment);
         if (validateCommentAuthorAndDate(userId, itemId)) {
             comment.setItemId(itemId);
             comment.setAuthor(userRepository.findById(userId).orElseThrow(()
                     -> new UserNotFoundException("Владелец не найден")));
             comment.setCreated(LocalDateTime.now());
-            System.out.println(comment);
             log.info("Добавлен новый отзыв к вещи с Id = {}", itemId);
             return commentRepository.save(comment);
         }
         log.error("Неверные данные бронирования");
-        throw new UnavailiableException("Невозможно добавить отзыв. Проверьте данные бронирования");
+        throw new UnavailableException("Невозможно добавить отзыв. Проверьте данные бронирования");
     }
 
     @Override
@@ -162,12 +170,26 @@ public class ItemServiceImpl implements ItemService {
         return comments.stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
     }
 
+    @Override
+    public List<ItemDto> getItemsWithParam(long userId, Long from, Long size) {
+        if (from < 0 || size <= 0) {
+            log.error("Неверные параметры from {} или size {}", from, size);
+            throw new InvalidDataException("Неверные параметры");
+        }
+        return getItems(userId).stream()
+                .skip(from)
+                .limit(size)
+                .collect(Collectors.toList());
+    }
+
     private boolean validateCommentAuthorAndDate(long userId, long itemId) {
-        Booking booking = bookingRepository.findById(itemId).orElseThrow(() ->
-                new BookingNotFoundException(String.format("Бронирование с id %s не найдено", itemId)));
-        if (userId != booking.getBooker().getId() || (!booking.getStatus().equals(BookingStatus.APPROVED))) {
+        List<Booking> bookings = bookingRepository.findByItemIdAndEndIsBeforeOrderByEndDesc(itemId, LocalDateTime.now());
+        if (bookings.isEmpty()) {
             return false;
         }
-        return !booking.getEnd().isBefore(LocalDateTime.now());
+        for (Booking booking : bookings) {
+           return userId == booking.getBooker().getId() && (booking.getStatus().equals(BookingStatus.APPROVED));
+        }
+        return true;
     }
 }

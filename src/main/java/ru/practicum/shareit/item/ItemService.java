@@ -21,8 +21,12 @@ public interface ItemService {
 
     List<Item> searchItems(String text);
 
+    List<Item> searchItemsWithParams(String text, Long from, Long size);
+
     Comment addComment(CommentAddDto comment, long userId, long itemId);
 
     List<CommentDTO> findItemComments(long itemId);
+
+    List<ItemDto> getItemsWithParam(long userId, Long from, Long size);
 }
 

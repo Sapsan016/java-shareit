@@ -3,5 +3,5 @@ Template repository for Shareit project.
 
 ## Схема БД 
 
-![plot](./src/main/resources/bookings.png)
+![plot](server/src/main/resources/bookings.png)
 

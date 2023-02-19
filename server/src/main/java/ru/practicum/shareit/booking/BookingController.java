@@ -1,9 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
-import ru.practicum.shareit.booking.dto.BookingAddDto;
 import ru.practicum.shareit.exception.InvalidDataException;
 
 

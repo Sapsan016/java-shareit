@@ -26,8 +26,13 @@ public class UserController {
     }
     @PatchMapping("/{userId}")
     public ResponseEntity<Object> updateUser(@RequestBody UserRequestDto requestDto, @PathVariable long userId) {
-        log.info("Обновляется пользователь {}, userId {}", requestDto, userId);
+        log.info("Обновляется пользователь userId {}", userId);
         return userClient.updateUser(userId,requestDto);
+    }
+    @GetMapping("/{userId}")
+    public ResponseEntity<Object> getUser(@PathVariable long userId) {
+        log.info("Запрашивается пользователь userId {}", userId);
+        return userClient.getUser(userId);
     }
 
 }

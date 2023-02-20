@@ -39,15 +39,8 @@ public class BookingController {
     @GetMapping()                                          //Получение списка всех бронирований текущего пользователя
     public List<BookingDto> getUserBooking(@RequestParam(defaultValue = "ALL") String state,
                                            @RequestHeader(HEADER) long userId,
-                                           @RequestParam(required = false) Long from,
-                                           @RequestParam(required = false) Long size) {
-        if (from == null || size == null) {
-            return bookingService.getUserBooking(state, userId).stream()
-                    .map(BookingMapper::toBookingDto)
-                    .collect(Collectors.toList());
-        }
-        if (from < 0 || size <= 0)
-            throw new InvalidDataException("Неверные параметры");
+                                           @RequestParam Long from,
+                                           @RequestParam Long size) {
         return bookingService.getUserBooking(state, userId).stream()
                 .map(BookingMapper::toBookingDto)
                 .skip(from)

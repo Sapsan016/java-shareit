@@ -8,8 +8,10 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
+import ru.practicum.shareit.item.dto.CommentRequestDto;
 import ru.practicum.shareit.item.dto.ItemRequestDto;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 @Service
@@ -48,11 +50,15 @@ public class ItemClient extends BaseClient {
 
     public ResponseEntity<Object> searchItems(long userId, String text, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
-                "text" , text,
+                "text", text,
                 "from", from,
                 "size", size
         );
-        return get("/search?text={text}&from={from}&size={size}",userId, parameters);
+        return get("/search?text={text}&from={from}&size={size}", userId, parameters);
 
+    }
+
+    public ResponseEntity<Object> addComment(long userId, long itemId, @Valid CommentRequestDto requestDto) {
+        return post("/" + itemId + "/comment", userId, requestDto);
     }
 }

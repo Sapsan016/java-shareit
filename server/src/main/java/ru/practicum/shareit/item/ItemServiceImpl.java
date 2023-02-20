@@ -107,9 +107,6 @@ public class ItemServiceImpl implements ItemService {
                 new ItemNotFoundException(String.format("Вещь с id %s не найдена", itemId)));
         ItemDto itemDto = ItemMapper.toItemDto(item);
         itemDto.setComments(findItemComments(itemId));
-        if (item.getOwnerId() != userId) {
-            return itemDto;
-        }
         List<Booking> bookings = bookingRepository.findByItemIdOrderByStartDesc(itemId);
         if (bookings.isEmpty()) {
             return itemDto;

@@ -21,7 +21,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Object> addUser(@RequestBody @Valid UserRequestDto requestDto) {
-        log.info("Создается пользователь {}", requestDto);
+        log.info("Создается пользователь {}", requestDto.toString());
         return userClient.addUser(requestDto);
     }
 

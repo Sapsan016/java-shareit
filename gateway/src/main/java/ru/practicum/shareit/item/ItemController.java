@@ -21,7 +21,7 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<Object> addItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                                           @RequestBody @Valid ItemRequestDto requestDto) {
+                                          @RequestBody @Valid ItemRequestDto requestDto) {
         log.info("Добавляется вещь {}, пользователем userId={}", requestDto.toString(), userId);
         return itemClient.addItem(userId, requestDto);
     }
@@ -34,5 +34,16 @@ public class ItemController {
         return itemClient.updateItem(userId, itemId, requestDto);
     }
 
+    @GetMapping("/{itemId}")
+    public ResponseEntity<Object> getItem(@RequestHeader("X-Sharer-User-Id") long userId,
+                                          @PathVariable long itemId) {
+        log.info("Запрашивается вещь {}, пользователем userId={}", itemId, userId);
+        return itemClient.getItem(userId, itemId);
+    }
 
+    @GetMapping
+    public ResponseEntity<Object> getAllItems(@RequestHeader("X-Sharer-User-Id") long userId) {
+        log.info("Запрашивается список всех вещей пользователем userId={}", userId);
+        return itemClient.getItems(userId);
+    }
 }

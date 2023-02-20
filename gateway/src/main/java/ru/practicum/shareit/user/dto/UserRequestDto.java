@@ -1,9 +1,6 @@
 package ru.practicum.shareit.user.dto;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.Email;
@@ -13,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@ToString
 public class UserRequestDto {
     @NotBlank(message = "Поле name не должно быть пустым")
     String name;

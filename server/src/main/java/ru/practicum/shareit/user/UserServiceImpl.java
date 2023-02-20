@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
-import ru.practicum.shareit.user.dto.UserAddDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 

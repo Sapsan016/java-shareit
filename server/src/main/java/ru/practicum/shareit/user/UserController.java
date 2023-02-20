@@ -2,8 +2,6 @@ package ru.practicum.shareit.user;
 
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.UserNotFoundException;
-import ru.practicum.shareit.user.dto.UserAddDto;
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 
 import javax.validation.Valid;
@@ -42,7 +40,7 @@ public class UserController {
     }
 
     @PostMapping()                                                                           //Добавить пользователя
-    public UserDto addUser(@Valid @RequestBody UserAddDto userAddDto) {
+    public UserDto addUser(@RequestBody UserAddDto userAddDto) {
         return UserMapper.toUserDto(userService.addUser(userAddDto));
     }
 

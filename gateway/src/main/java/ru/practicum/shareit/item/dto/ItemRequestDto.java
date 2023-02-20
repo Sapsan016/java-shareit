@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemRequestDto {
     @NotBlank(message = "Поле name не должно быть пустым")

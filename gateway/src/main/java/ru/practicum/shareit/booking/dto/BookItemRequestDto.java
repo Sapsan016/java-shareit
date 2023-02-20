@@ -17,8 +17,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookItemRequestDto {
     long itemId;
-    @FutureOrPresent
+    @FutureOrPresent(message = "Время начала бронирования не может быть в прошлом")
     LocalDateTime start;
-    @Future
+    @Future(message = "Время окончания бронирования должно быть в будущем")
     LocalDateTime end;
 }

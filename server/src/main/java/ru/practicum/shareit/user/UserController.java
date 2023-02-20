@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.user.mapper.UserMapper;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 

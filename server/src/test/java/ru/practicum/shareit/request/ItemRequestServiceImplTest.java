@@ -10,14 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.practicum.shareit.exception.InvalidDataException;
 import ru.practicum.shareit.exception.ItemRequestNotFoundException;
+import ru.practicum.shareit.item.ItemAddDto;
 import ru.practicum.shareit.item.ItemService;
-import ru.practicum.shareit.item.dto.ItemAddDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestAddDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.user.UserAddDto;
 import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.user.dto.UserAddDto;
 import ru.practicum.shareit.user.model.User;
 
 import javax.transaction.Transactional;

@@ -9,7 +9,6 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.exception.*;
-import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
@@ -73,10 +72,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item addItem(ItemAddDto itemAddDto, long userId) { //Добавить вещь
         Item item = ItemMapper.toItem(itemAddDto);
-        if (item.getAvailable() == null) {
-            log.error("Не заполнено поле available");
-            throw new UnavailableException("Поле available не может быть пустым");
-        }
         if (userRepository.findById(userId).isEmpty()) {
             log.error("Пользователь с Id = {} не найден", userId);
             throw new UserNotFoundException("Пользователь не найден");

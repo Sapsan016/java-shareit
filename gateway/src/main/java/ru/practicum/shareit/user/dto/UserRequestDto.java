@@ -14,10 +14,10 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserRequestDto {
-    @NotBlank
+    @NotBlank(message = "Поле name не должно быть пустым")
     String name;
-    @NotBlank
-    @Email
+    @NotBlank(message = "Поле email не должно быть пустым")
+    @Email(message = "Поле email должно соотвествовать формату")
     String email;
 
 }

@@ -42,6 +42,6 @@ public class UserClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getAllUsers() {
-       return get("");
+        return get("");
     }
 }

@@ -3,11 +3,9 @@ package ru.practicum.shareit.item;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,12 +23,12 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto addItem(@Valid @RequestBody ItemAddDto itemAddDto, @RequestHeader(HEADER) long userId) { //добавить вещь
+    public ItemDto addItem(@RequestBody ItemAddDto itemAddDto, @RequestHeader(HEADER) long userId) { //добавить вещь
         return ItemMapper.toItemDto(itemService.addItem(itemAddDto, userId));
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@Valid @PathVariable long itemId, @RequestHeader(HEADER) long userId, //Обновить вещь
+    public ItemDto updateItem(@PathVariable long itemId, @RequestHeader(HEADER) long userId, //Обновить вещь
                               @RequestBody ItemAddDto itemAddDto) {
         return ItemMapper.toItemDto(itemService.updateItem(itemId, userId, itemAddDto));
     }
@@ -65,7 +63,7 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")                                                        //Добавить отзыв о вещи
-    public CommentDTO addComment(@Valid @RequestBody CommentAddDto commentAddDto, @RequestHeader(HEADER) long userId,
+    public CommentDTO addComment(@RequestBody CommentAddDto commentAddDto, @RequestHeader(HEADER) long userId,
                                  @PathVariable long itemId) {
         return CommentMapper.toCommentDto(itemService.addComment(commentAddDto, userId, itemId));
     }

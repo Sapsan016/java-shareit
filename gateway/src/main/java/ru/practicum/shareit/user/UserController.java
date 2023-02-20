@@ -35,4 +35,16 @@ public class UserController {
         return userClient.getUser(userId);
     }
 
+    @GetMapping
+    public ResponseEntity<Object> getAllUsers() {
+        log.info("Запрашивается список всех пользователей");
+        return userClient.getAllUsers();
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Object> deleteUser(@PathVariable long userId) {
+        log.info("Удаляется пользователь userId {}", userId);
+        return userClient.removeUser(userId);
+    }
+
 }

@@ -83,7 +83,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item updateItem(long itemId, long userId, ItemAddDto itemAddDto) {
-
         Item itemToUpdate = itemRepository.findById(itemId).orElseThrow(() ->
                 new ItemNotFoundException(String.format("Вещь с id %s не найдена", itemId)));
         if (itemToUpdate.getOwnerId() != userId) {
@@ -133,8 +132,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> searchItemsWithParams(String text, Long from, Long size) {
-        if (from < 0 || size <= 0)
-            throw new InvalidDataException("Неверные параметры");
         return searchItems(text).stream()
                 .skip(from)
                 .limit(size)
@@ -164,10 +161,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getItemsWithParam(long userId, Long from, Long size) {
-        if (from < 0 || size <= 0) {
-            log.error("Неверные параметры from {} или size {}", from, size);
-            throw new InvalidDataException("Неверные параметры");
-        }
         return getItems(userId).stream()
                 .skip(from)
                 .limit(size)
@@ -180,7 +173,7 @@ public class ItemServiceImpl implements ItemService {
             return false;
         }
         for (Booking booking : bookings) {
-           return userId == booking.getBooker().getId() && (booking.getStatus().equals(BookingStatus.APPROVED));
+            return userId == booking.getBooker().getId() && (booking.getStatus().equals(BookingStatus.APPROVED));
         }
         return true;
     }

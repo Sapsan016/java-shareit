@@ -10,6 +10,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
 import ru.practicum.shareit.item.dto.ItemRequestDto;
 
+import java.util.Map;
+
 @Service
 public class ItemClient extends BaseClient {
     private static final String API_PREFIX = "/items";
@@ -29,14 +31,28 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> updateItem(long userId, long itemId, ItemRequestDto requestDto) {
-        return patch("/" + userId, itemId, requestDto);
+        return patch("/" + itemId, userId, requestDto);
     }
 
     public ResponseEntity<Object> getItem(long userId, long itemId) {
         return get("/" + itemId, userId);
     }
 
-    public ResponseEntity<Object> getItems(long userId) {
-        return get("",userId);
+    public ResponseEntity<Object> getItems(long userId, Integer from, Integer size) {
+        Map<String, Object> parameters = Map.of(
+                "from", from,
+                "size", size
+        );
+        return get("?from={from}&size={size}", userId, parameters);
+    }
+
+    public ResponseEntity<Object> searchItems(long userId, String text, Integer from, Integer size) {
+        Map<String, Object> parameters = Map.of(
+                "text" , text,
+                "from", from,
+                "size", size
+        );
+        return get("/search?text={text}&from={from}&size={size}",userId, parameters);
+
     }
 }

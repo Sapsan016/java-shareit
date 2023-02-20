@@ -40,23 +40,15 @@ public class ItemController {
 
     @GetMapping                                                                                 //Получить все вещи
     public List<ItemDto> getItems(@RequestHeader(HEADER) long userId,
-                                  @RequestParam(required = false) Long from,
-                                  @RequestParam(required = false) Long size) {
-        if (from == null || size == null) {
-            return itemService.getItems(userId);
-        }
+                                  @RequestParam Long from,
+                                  @RequestParam Long size) {
         return itemService.getItemsWithParam(userId, from, size);
     }
 
     @GetMapping("/search")                                                                          //Найти вещи
     public List<ItemDto> searchItems(@RequestParam("text") String text,
-                                     @RequestParam(required = false) Long from,
-                                     @RequestParam(required = false) Long size) {
-        if (from == null || size == null) {
-            return itemService.searchItems(text).stream()
-                    .map(ItemMapper::toItemDto)
-                    .collect(Collectors.toList());
-        }
+                                     @RequestParam Long from,
+                                     @RequestParam Long size) {
         return itemService.searchItemsWithParams(text, from, size).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());

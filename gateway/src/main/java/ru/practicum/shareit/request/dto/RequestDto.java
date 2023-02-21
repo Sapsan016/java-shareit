@@ -1,19 +1,18 @@
 package ru.practicum.shareit.request.dto;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.shareit.user.model.User;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-
-@Data
+@Getter
+@NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ItemRequestAddDto {
-
+public class RequestDto {
+    @NotBlank(message = "Описание не может быть пустым")
     String description;
-    User requester;
+    Long requester;
     LocalDateTime created;
 }

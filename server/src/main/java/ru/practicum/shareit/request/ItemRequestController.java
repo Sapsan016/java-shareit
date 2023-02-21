@@ -25,7 +25,7 @@ public class ItemRequestController {
     }
 
     @PostMapping
-    public ItemRequestDto addRequest(@Valid @RequestBody ItemRequestAddDto itemRequestAddDto,         //добавить запрос
+    public ItemRequestDto addRequest(@RequestBody ItemRequestAddDto itemRequestAddDto,         //добавить запрос
                                      @RequestHeader(HEADER) long userId) {
         return ItemRequestMapper.toItemRequestDto(requestService.addRequest(itemRequestAddDto, userId));
     }

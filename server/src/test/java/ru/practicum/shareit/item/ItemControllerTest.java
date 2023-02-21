@@ -11,9 +11,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import ru.practicum.shareit.item.dto.CommentAddDto;
-import ru.practicum.shareit.item.dto.ItemAddDto;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
@@ -92,17 +89,6 @@ public class ItemControllerTest {
     }
 
     @Test
-    void getAllItems() throws Exception {
-        when(itemService.getItems(ID))
-                .thenReturn(List.of(itemDto1, itemDto2));
-        mvc.perform(
-                        get("/items")
-                                .header(HEADER, ID))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(mapper.writeValueAsString(List.of(itemDto1, itemDto2))));
-    }
-
-    @Test
     void getAllItemsWithParam() throws Exception {
         when(itemService.getItemsWithParam(ID, 1L, 1L))
                 .thenReturn(List.of(itemDto2));
@@ -138,19 +124,6 @@ public class ItemControllerTest {
                         .header(HEADER, ID))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedResponse));
-    }
-
-    @Test
-    void searchItems() throws Exception {
-        when(itemService.searchItems("item"))
-                .thenReturn(List.of(item1, item2));
-        mvc.perform(
-                        get("/items/search?text=item")
-                                .header(HEADER, ID))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(mapper.writeValueAsString(List.of(
-                        ItemMapper.toItemDto(item1),
-                        ItemMapper.toItemDto(item2)))));
     }
 
     @Test

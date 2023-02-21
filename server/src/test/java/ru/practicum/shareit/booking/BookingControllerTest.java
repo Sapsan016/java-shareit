@@ -92,18 +92,6 @@ class BookingControllerTest {
     }
 
     @Test
-    void getUserBookingWithoutParams() throws Exception {
-        when(bookingService.getUserBooking("ALL", ID))
-                .thenReturn(List.of(booking, booking2));
-        String expectedResponse = mapper.writeValueAsString(List.of(booking, booking2));
-        mvc.perform(get("/bookings?state=ALL")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header(HEADER, ID))
-                .andExpect(status().isOk())
-                .andExpect(content().json(expectedResponse));
-    }
-
-    @Test
     void getUserBookingWithParams() throws Exception {
         when(bookingService.getUserBooking("ALL", ID))
                 .thenReturn(List.of(booking, booking2));
@@ -113,18 +101,6 @@ class BookingControllerTest {
                         .header(HEADER, ID))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedResponse));
-    }
-
-    @Test
-    void getUserBookingWithWrongParams() throws Exception {
-        when(bookingService.getUserBooking("ALL", ID))
-                .thenReturn(List.of(booking, booking2));
-        mvc.perform(get("/bookings?state=ALL&from=0&size=0")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header(HEADER, ID))
-                .andExpect(status().isBadRequest())
-                .andExpect(result -> Assertions.assertTrue(result.getResolvedException()
-                        instanceof InvalidDataException));
     }
 
     @Test

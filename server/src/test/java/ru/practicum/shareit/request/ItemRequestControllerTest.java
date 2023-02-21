@@ -75,20 +75,6 @@ class ItemRequestControllerTest {
     }
 
     @Test
-    void getRequestsWithoutParams() throws Exception {
-        when(requestService.getAllRequests(ID))
-                .thenReturn(Stream.of(request, request2)
-                        .map(ItemRequestMapper::toItemRequestDto)
-                        .collect(Collectors.toList()));
-        String expectedResponse = mapper.writeValueAsString(List.of(request, request2));
-        mvc.perform(get("/requests/all")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header(HEADER, ID))
-                .andExpect(status().isOk())
-                .andExpect(content().json(expectedResponse));
-    }
-
-    @Test
     void getRequestsWithParams() throws Exception {
         when(requestService.getAllRequestsWithParam(ID, 1L, 1L))
                 .thenReturn(List.of(ItemRequestMapper.toItemRequestDto(request2)));

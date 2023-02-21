@@ -102,7 +102,7 @@ public class ItemRequestServiceImplTest {
         ItemRequest savedRequest2 = itemRequestService.addRequest(itemRequestAddDto2, savedUser.getId());
         ItemAddDto item2 = new ItemAddDto("Item2", "item2 description", true, savedRequest2.getId());
         Item savedItem2 = itemService.addItem(item2, savedUser.getId());
-        List<ItemRequestDto> requestDtoList = itemRequestService.getAllRequests(savedUser2.getId());
+        List<ItemRequestDto> requestDtoList = itemRequestService.getAllRequestsWithParam(savedUser2.getId(), 0,10);
         assertThat(requestDtoList.size(), equalTo(2));
         assertThat(requestDtoList.get(0).getItems().get(0), equalTo(savedItem2));
         assertThat(requestDtoList.get(1).getItems().get(0), equalTo(savedItem));

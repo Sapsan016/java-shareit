@@ -16,15 +16,12 @@ import ru.practicum.shareit.exception.InvalidDataException;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UnavailableException;
 import ru.practicum.shareit.exception.UserNotFoundException;
-import ru.practicum.shareit.item.dto.CommentAddDto;
-import ru.practicum.shareit.item.dto.ItemAddDto;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.UserAddDto;
 import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.user.dto.UserAddDto;
 import ru.practicum.shareit.user.model.User;
 
 import javax.transaction.Transactional;
@@ -174,15 +171,6 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void failedAddItemEmptyAvailable() {
-        try {
-            itemService.addItem(itemAddDtoFailed, owner.getId());
-        } catch (UnavailableException e) {
-            assertThat("Поле available не может быть пустым", equalTo(e.getMessage()));
-        }
-    }
-
-    @Test
     void failedAddItemWrongUser() {
         try {
             itemService.addItem(itemAddDto1, 99L);
@@ -210,24 +198,6 @@ class ItemServiceImplTest {
                     null), booker.getId(), 99L);
         } catch (UnavailableException e) {
             assertThat("Невозможно добавить отзыв. Проверьте данные бронирования", equalTo(e.getMessage()));
-        }
-    }
-
-    @Test
-    void failedGetItemsWrongParams() {
-        try {
-            itemService.getItemsWithParam(owner.getId(), -1L, 0L);
-        } catch (InvalidDataException e) {
-            assertThat("Неверные параметры", equalTo(e.getMessage()));
-        }
-    }
-
-    @Test
-    void failedSearchWrongParams() {
-        try {
-            itemService.searchItemsWithParams("item", -1L, 0L);
-        } catch (InvalidDataException e) {
-            assertThat("Неверные параметры", equalTo(e.getMessage()));
         }
     }
 }

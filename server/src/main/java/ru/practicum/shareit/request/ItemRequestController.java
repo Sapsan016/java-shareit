@@ -37,12 +37,9 @@ public class ItemRequestController {
     }
 
     @GetMapping("/all")                                          //получить список всех запросов других пользователей
-    public List<ItemRequestDto> getAllRequestsWithParam(@RequestParam(required = false) Long from,
-                                                        @RequestParam(required = false) Long size,
+    public List<ItemRequestDto> getAllRequestsWithParam(@RequestParam Long from,
+                                                        @RequestParam Long size,
                                                         @RequestHeader(HEADER) long userId) {
-        if (from == null || size == null) {
-            return requestService.getAllRequests(userId);
-        }
         return requestService.getAllRequestsWithParam(userId, from, size);
     }
 

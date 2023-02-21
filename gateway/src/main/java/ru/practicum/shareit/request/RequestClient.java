@@ -10,6 +10,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
 import ru.practicum.shareit.request.dto.RequestDto;
 
+import java.util.Map;
+
 @Service
 public class RequestClient extends BaseClient {
     private static final String API_PREFIX = "/requests";
@@ -23,7 +25,25 @@ public class RequestClient extends BaseClient {
                         .build()
         );
     }
+
     public ResponseEntity<Object> addRequest(long userId, RequestDto requestDto) {
         return post("", userId, requestDto);
     }
+
+    public ResponseEntity<Object> getRequest(long requestId, long userId) {
+        return get("/" + requestId, userId);
+    }
+
+    public ResponseEntity<Object> getRequests(long userId, Integer from, Integer size) {
+        Map<String, Object> parameters = Map.of(
+                "from", from,
+                "size", size
+        );
+        return get("/all?from={from}&size={size}", userId, parameters);
+    }
+
+    public ResponseEntity<Object> getAllRequests(long userId) {
+        return get("", userId);
+    }
 }
+

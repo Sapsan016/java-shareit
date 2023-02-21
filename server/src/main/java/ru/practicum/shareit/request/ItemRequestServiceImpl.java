@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.InvalidDataException;
 import ru.practicum.shareit.exception.ItemRequestNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
@@ -72,10 +71,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> getAllRequestsWithParam(long userId, long from, long size) {
-        if (from < 0 || size <= 0) {
-            log.error("Неверные параметры from {} или size {}", from, size);
-            throw new InvalidDataException("Неверные параметры");
-        }
         findRequester(userId);
         log.info("Выполняется поиск всех запросов с начиная с номера {} количество запросов {}", from, size);
         List<ItemRequest> requestList = findAll();
@@ -91,19 +86,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<ItemRequestDto> getAllRequests(long userId) {
-        findRequester(userId);
-        List<ItemRequest> requestList = findAll();
-        if (isRequester(requestList, userId)) {
-            return new ArrayList<>();
-        }
-        return requestList.stream()
-                .sorted(Comparator.comparing(ItemRequest::getCreated).reversed())
-                .map(ItemRequestMapper::toItemRequestDto)
-                .peek((requestDto) -> requestDto.setItems(findItems(requestDto.getId())))
-                .collect(Collectors.toList());
-    }
 
     private User findRequester(long userId) {
         log.info("Выполняется поиск пользоватля с Id = {}", userId);

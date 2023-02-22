@@ -12,23 +12,19 @@ services:
       - POSTGRES_PASSWORD=CHS2t1062
 
   server:
-    image: amazoncorretto:11-alpine-jdk
-    tty: true
+    build: server/
     ports:
       - "9090:9090"
     depends_on:
       - db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/share_it
-      - DB_NAME=share_it
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=CHS2t1062
-      - DB_HOST=db
-      - DB_PORT=6541
+
 
   gateway:
-    image: amazoncorretto:11-alpine-jdk
-    tty: true
+    build: gateway/
     ports:
       - "8080:8080"
     depends_on:

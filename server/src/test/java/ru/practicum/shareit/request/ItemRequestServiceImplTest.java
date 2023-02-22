@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 @Transactional
 @SpringBootTest(
-        properties = "db.name=test",
+     //   properties = "db.name=test",
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)

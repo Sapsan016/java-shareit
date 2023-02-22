@@ -7,9 +7,9 @@ services:
     ports:
       - "6541:5432"
     environment:
-      - POSTGRES_DB=shareit
-      - POSTGRES_USER=test
-      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=share_it
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=CHS2t1062
 
   server:
     build: server/
@@ -18,9 +18,9 @@ services:
     depends_on:
       - db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
-      - POSTGRES_USER=test
-      - POSTGRES_PASSWORD=test
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/share_it
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=CHS2t1062
 
 
   gateway:

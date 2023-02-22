@@ -12,7 +12,6 @@ import ru.practicum.shareit.booking.BookingService;
 import ru.practicum.shareit.booking.BookingAddDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.exception.InvalidDataException;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UnavailableException;
 import ru.practicum.shareit.exception.UserNotFoundException;

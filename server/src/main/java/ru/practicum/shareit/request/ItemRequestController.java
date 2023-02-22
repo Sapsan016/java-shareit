@@ -7,7 +7,6 @@ import ru.practicum.shareit.request.dto.ItemRequestAddDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 
-import javax.validation.Valid;
 import java.util.List;
 
 

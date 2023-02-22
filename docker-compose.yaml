@@ -1,32 +1,38 @@
-# версия Docker Compose
 version: '20.10.22'
-
-# имена и описания контейнеров, которые должны быть развёрнуты
 services:
-  # описание контейнера db
   db:
-    # образ, из которого должен быть запущен контейнер
     image: postgres:13.7-alpine
-    # volume и связанная с ним директория в контейнере
     volumes:
       - /var/lib/postgresql/data/
-    # переменные окружения
+    ports:
+      - "6541:5432"
     environment:
       - POSTGRES_DB=share_it
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=CHS2t1062
 
-  web:
-    build: .
+  server:
+    image: amazoncorretto:11-alpine-jdk
+    tty: true
     ports:
-      - "8080:8080"
-    # "зависит от",
+      - "9090:9090"
     depends_on:
       - db
-    # переменные окружения
     environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/share_it
       - DB_NAME=share_it
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=CHS2t1062
       - DB_HOST=db
-      - DB_PORT=5432
+      - DB_PORT=6541
+
+  gateway:
+    image: amazoncorretto:11-alpine-jdk
+    tty: true
+    ports:
+      - "8080:8080"
+    depends_on:
+      - server
+    environment:
+      - SHAREIT_SERVER_URL=http://server:9090
+
